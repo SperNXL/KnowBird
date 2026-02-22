@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="12dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical">
+
+    <!-- 左侧图片 -->
+    <ImageView
+        android:id="@+id/iv_icon"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/bird_sample" />
+
+    <!-- 中间文字区域 -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/default_bird"
+            android:textSize="16sp"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/tv_subtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/default_bird_name"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray" />
+
+        <TextView
+            android:id="@+id/tv_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="2026-2-16 23:10"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray" />
+
+    </LinearLayout>
+
+</LinearLayout>

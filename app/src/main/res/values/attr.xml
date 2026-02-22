@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="ListItemView">
+        <attr name="liv_icon" format="reference" />
+        <attr name="liv_title" format="string" />
+        <attr name="liv_subtitle" format="string" />
+        <attr name="liv_time" format="string" />
+        <attr name="liv_progress" format="integer" />
+        <attr name="liv_action_icon" format="reference" />
+    </declare-styleable>
+</resources>

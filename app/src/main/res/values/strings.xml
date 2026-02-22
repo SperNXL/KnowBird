@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">KnowBird</string>
+    <string name="main_search">搜索鸟类中、英、拉丁名</string>
+    <string name="default_bird">红腰穗鹛</string>
+    <string name="today_recommend">今日推荐</string>
+    <string name="default_bird_name">Stachyris muculata</string>
+</resources>
