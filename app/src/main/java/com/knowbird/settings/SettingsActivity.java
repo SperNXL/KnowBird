@@ -1,6 +1,9 @@
 package com.knowbird.settings;
 
+import android.content.Context;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -12,24 +15,38 @@ import com.knowbird.settings.inter.ISettingsItem;
 import com.knowbird.settings.item.ClickItem;
 import com.knowbird.settings.item.SwitchItem;
 import com.knowbird.settings.item.TitleItem;
+import com.knowbird.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-// SettingsActivity.java
 public class SettingsActivity extends AppCompatActivity implements SettingsAdapter.OnSettingsItemClickListener {
+
+    private Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mContext = getApplicationContext();
         setContentView(R.layout.activity_setting);
-
-        RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new SettingsAdapter(getSettingsData(), this));
+        initView();
     }
 
-    // 核心方法：构建数据源。新增条目/分组，只改这里！
+    private void initView() {
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        View rootView = findViewById(android.R.id.content);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(new SettingsAdapter(getSettingsData(), this));
+        // 添加状态栏&导航栏高度的padding
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int statusBarHeight = ScreenUtils.getStatusBarHeight(mContext);
+            int navigationBarHeight = ScreenUtils.getNavigationBarHeight(mContext);
+            rootView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+
+        }
+    }
+
+    // 构建数据源。新增条目/分组
     private List<ISettingsItem> getSettingsData() {
         List<ISettingsItem> list = new ArrayList<>();
 
@@ -43,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         list.add(new SwitchItem("latin_name", "展示拉丁学名", true));
         list.add(new SwitchItem("distribution_map", "展示分布图", true));
 
-        // 【拓展演示】通用分组新增一项，只需加一行代码
+        // 通用分组新增一项，只需加一行代码
         list.add(new SwitchItem("auto_save", "自动保存设置", false));
 
         // 其他分组

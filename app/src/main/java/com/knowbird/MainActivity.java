@@ -2,12 +2,10 @@ package com.knowbird;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.knowbird.adapter.BirdAdapter;
 import com.knowbird.settings.SettingsActivity;
 import com.knowbird.utils.KeyBoardUtils;
+import com.knowbird.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,22 +39,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
-
-        btnSetting = findViewById(R.id.iv_settings);
-
-        btnAll = findViewById(R.id.btn_all);
-        btnImage = findViewById(R.id.btn_image);
-        btnAudio = findViewById(R.id.btn_audio);
-        btnUnknown = findViewById(R.id.btn_unknown);
-        recyclerView = findViewById(R.id.recyclerView);
-        tvEmptyHint = findViewById(R.id.tv_empty_hint);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-        llAlbum = findViewById(R.id.ll_album);
-        llListenBird = findViewById(R.id.ll_listen_bird);
-        llCamera = findViewById(R.id.ll_camera);
+        setContentView(R.layout.activity_main);
+        initView();
 
         // 模拟数据
         BirdAdapter.BirdItem birdItem = new BirdAdapter.BirdItem(R.drawable.bird_sample, "红腰穗鹛",
@@ -125,6 +111,30 @@ public class MainActivity extends AppCompatActivity {
         llAlbum.setOnClickListener(v -> showToast("打开相册"));
         llListenBird.setOnClickListener(v -> showToast("开始听鸟识别"));
         llCamera.setOnClickListener(v -> showToast("打开相机"));
+    }
+
+    private void initView() {
+        btnSetting = findViewById(R.id.iv_settings);
+
+        btnAll = findViewById(R.id.btn_all);
+        btnImage = findViewById(R.id.btn_image);
+        btnAudio = findViewById(R.id.btn_audio);
+        btnUnknown = findViewById(R.id.btn_unknown);
+        recyclerView = findViewById(R.id.recyclerView);
+        tvEmptyHint = findViewById(R.id.tv_empty_hint);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        llAlbum = findViewById(R.id.ll_album);
+        llListenBird = findViewById(R.id.ll_listen_bird);
+        llCamera = findViewById(R.id.ll_camera);
+
+        View rootView = findViewById(android.R.id.content);
+        // 添加状态栏&导航栏高度的padding
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int statusBarHeight = ScreenUtils.getStatusBarHeight(mContext);
+            int navigationBarHeight = ScreenUtils.getNavigationBarHeight(mContext);
+            rootView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+        }
     }
 
     // 更新按钮选中状态

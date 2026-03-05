@@ -1,8 +1,21 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Base.Theme.KnowBird" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!-- 状态栏颜色 -->
+        <item name="android:statusBarColor">@android:color/white</item>
+
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+
+        <!-- 允许绘制系统栏背景 -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+
+        <!-- 背景颜色 -->
+        <item name="android:windowBackground">@android:color/white</item>
     </style>
 
     <style name="Theme.KnowBird" parent="Base.Theme.KnowBird" />
