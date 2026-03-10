@@ -1,6 +1,7 @@
 package com.knowbird.settings;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.knowbird.R;
+import com.knowbird.settings.achievement.AchievementActivity;
 import com.knowbird.settings.adapter.SettingsAdapter;
 import com.knowbird.settings.inter.ISettingsItem;
 import com.knowbird.settings.item.ClickItem;
@@ -23,6 +25,8 @@ import java.util.List;
 public class SettingsActivity extends AppCompatActivity implements SettingsAdapter.OnSettingsItemClickListener {
 
     private Context mContext;
+
+    private Intent achievementIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +56,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
 
         // 顶部独立项
         list.add(new ClickItem("achievement", "成就清单"));
+        // TODO: 2026/3/10 将intent放入clickIten，后期就不用在前面声明intent
+        achievementIntent = new Intent(this, AchievementActivity.class);
         list.add(new ClickItem("offline", "离线数据包"));
 
         // 通用分组
@@ -82,6 +88,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
                 break;
             case "clear_cache":
                 // 处理清除缓存
+                break;
+            case "achievement":
+                startActivity(achievementIntent);
                 break;
         }
     }
