@@ -23,7 +23,7 @@ import com.knowbird.utils.ScreenUtils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     private View llAlbum, llListenBird, llCamera;
     private RecyclerView recyclerView;

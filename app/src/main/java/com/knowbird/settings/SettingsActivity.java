@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.knowbird.BaseActivity;
 import com.knowbird.R;
 import com.knowbird.settings.achievement.AchievementActivity;
 import com.knowbird.settings.adapter.SettingsAdapter;
@@ -27,7 +28,7 @@ import java.util.List;
  * 设置 Activity
  *
  */
-public class SettingsActivity extends AppCompatActivity implements SettingsAdapter.OnSettingsItemClickListener {
+public class SettingsActivity extends BaseActivity implements SettingsAdapter.OnSettingsItemClickListener {
 
     private Context mContext;
 

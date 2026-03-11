@@ -17,6 +17,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.knowbird.BaseActivity;
 import com.knowbird.R;
 import com.knowbird.settings.achievement.adapter.AchieveAdapter;
 import com.knowbird.settings.achievement.bean.AchieveBean;
@@ -29,7 +30,7 @@ import java.util.List;
  * 成就清单
  *
  */
-public class AchievementActivity extends AppCompatActivity {
+public class AchievementActivity extends BaseActivity {
 
     private RecyclerView recyclerView;
     private AchieveAdapter adapter;

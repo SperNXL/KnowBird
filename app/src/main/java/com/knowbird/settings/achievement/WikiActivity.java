@@ -13,6 +13,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.knowbird.BaseActivity;
 import com.knowbird.R;
 import com.knowbird.utils.ScreenUtils;
 
@@ -20,7 +21,7 @@ import com.knowbird.utils.ScreenUtils;
  * 鸟类百科
  *
  */
-public class WikiActivity extends AppCompatActivity {
+public class WikiActivity extends BaseActivity {
 
     private Context mContext;
 
