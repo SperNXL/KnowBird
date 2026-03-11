@@ -9,7 +9,7 @@
     tools:context=".settings.achievement.WikiActivity">
 
     <TextView
-        android:id="@+id/bird_name"
+        android:id="@+id/cn_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/default_bird_name"/>

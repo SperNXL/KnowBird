@@ -31,7 +31,7 @@ public class AchievementActivity extends AppCompatActivity {
     private AchieveAdapter adapter;
     private List<AchieveBean> dataList = new ArrayList<>();
     private Switch switchReadOnly;
-    private boolean isReadOnly = false;
+    private boolean isReadOnly = true;
     private TextView tvSummary;
 
     private Context mContext;
@@ -72,6 +72,9 @@ public class AchievementActivity extends AppCompatActivity {
 
         }
 
+        adapter.setReadOnly(isReadOnly);
+        switchReadOnly.setChecked(isReadOnly);
+
         // 只读模式开关
         switchReadOnly.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isReadOnly = isChecked;
@@ -88,7 +91,7 @@ public class AchievementActivity extends AppCompatActivity {
             }
         });
 
-        // 3. 更多菜单
+        // 更多菜单
         ivMore.setOnClickListener(v -> showMorePopupMenu(v));
 
         // 初始更新统计
@@ -97,8 +100,8 @@ public class AchievementActivity extends AppCompatActivity {
 
     private void initData() {
         // 模拟数据
-        dataList.add(new AchieveBean("喜鹊", "Oriental Magpie", "6.13", "2026-02-16"));
-        dataList.add(new AchieveBean("老虎", "Tiger", "8.5", "2026-02-15"));
+        dataList.add(new AchieveBean(1, "喜鹊", "Oriental Magpie", "6.13", "2026-02-16"));
+        dataList.add(new AchieveBean(2, "老虎", "Tiger", "8.5", "2026-02-15"));
         adapter.notifyDataSetChanged();
     }
 
@@ -122,7 +125,7 @@ public class AchievementActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("添加成就");
         builder.setPositiveButton("添加", (dialog, which) -> {
-            dataList.add(new AchieveBean("新物种", "New Species", "5.0", "2026-03-10"));
+            dataList.add(new AchieveBean(dataList.size(), "新物种", "New Species", "5.0", "2026-03-10"));
             adapter.notifyItemInserted(dataList.size() - 1);
             updateSummary();
         });

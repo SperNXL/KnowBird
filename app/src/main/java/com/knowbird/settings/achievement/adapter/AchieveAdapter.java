@@ -2,6 +2,8 @@ package com.knowbird.settings.achievement.adapter;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.knowbird.R;
+import com.knowbird.settings.achievement.WikiActivity;
 import com.knowbird.settings.achievement.bean.AchieveBean;
 
 import java.util.List;
@@ -55,17 +58,21 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         holder.tvInfo.setText(String.format("%s\n稀有度：%s  %s",
                 bean.getEnName(), bean.getRarity(), bean.getDate()));
 
-        // 只读模式下 CheckBox 隐藏且不可点击；
-        // 非只读模式下 显示 CheckBox 并绑定选中状态
+        // 只读模式下 CheckBox 隐藏且不可点击；点击item进入wiki
+        // 非只读模式下 显示 CheckBox 并绑定选中状态；点击item进入编辑
         if (isReadOnly) {
             holder.checkBox.setVisibility(View.GONE);
-            // 弹出编辑框
+
             holder.itemView.setOnClickListener(v -> {
-                showEditDialog(v.getContext(), bean, position);
+                Context context = v.getContext();
+                Bundle bundle = new Bundle();
+                bundle.putInt("m_id", bean.getId());
+                bundle.putString("m_name", bean.getName());
+                bundle.putString("m_en_name", bean.getEnName());
+                Intent wikiIntent = new Intent(context, WikiActivity.class);
+                wikiIntent.putExtras(bundle);
+                context.startActivity(wikiIntent);
             });
-        } else {
-            holder.checkBox.setVisibility(View.VISIBLE);
-            holder.checkBox.setChecked(selectedItems.get(position, false));
 
             // 点击 CheckBox 改变选中状态
             holder.checkBox.setOnClickListener(v -> {
@@ -75,6 +82,14 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
                     selectedItems.put(position, true);
                 }
                 notifyItemChanged(position);
+            });
+        } else {
+            holder.checkBox.setVisibility(View.VISIBLE);
+            holder.checkBox.setChecked(selectedItems.get(position, false));
+
+            // 弹出编辑框
+            holder.itemView.setOnClickListener(v -> {
+                showEditDialog(v.getContext(), bean, position);
             });
         }
     }

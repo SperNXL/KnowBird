@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.KnowBird">
         <activity
+            android:name=".settings.achievement.WikiActivity"
+            android:exported="false" />
+        <activity
             android:name=".settings.achievement.AchievementActivity"
             android:exported="false" />
         <activity

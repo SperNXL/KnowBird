@@ -5,6 +5,7 @@ package com.knowbird.settings.achievement.bean;
  * 用于封装列表项的所有数据
  */
 public class AchieveBean {
+    private int id;
     // 中文名称
     private String name;
     // 英文名称
@@ -17,11 +18,20 @@ public class AchieveBean {
     public AchieveBean() {
     }
 
-    public AchieveBean(String name, String enName, String rarity, String date) {
+    public AchieveBean(int id, String name, String enName, String rarity, String date) {
+        this.id = id;
         this.name = name;
         this.enName = enName;
         this.rarity = rarity;
         this.date = date;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getName() {
