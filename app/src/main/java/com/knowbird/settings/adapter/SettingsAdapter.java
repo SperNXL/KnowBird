@@ -18,19 +18,25 @@ import com.knowbird.settings.item.TitleItem;
 
 import java.util.List;
 
-// SettingsAdapter.java
+/**
+ * 设置 adapter
+ */
 public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<ISettingsItem> mDataList;
     private OnSettingsItemClickListener mListener;
 
-    // 构造函数：接收数据源和点击监听器
     public SettingsAdapter(List<ISettingsItem> dataList, OnSettingsItemClickListener listener) {
         this.mDataList = dataList;
         this.mListener = listener;
     }
 
-    // 核心方法：根据条目类型返回不同的 ViewType
+    /**
+     * 根据条目类型返回不同的 ViewType
+     *
+     * @param position position to query
+     * @return
+     */
     @Override
     public int getItemViewType(int position) {
         return mDataList.get(position).getType().ordinal();

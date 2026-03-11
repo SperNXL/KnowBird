@@ -7,6 +7,10 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
+/**
+ * 软键盘工具类
+ *
+ */
 public class KeyBoardUtils {
     private static final String TAG = "KeyBoardUtils";
 

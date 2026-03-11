@@ -25,6 +25,10 @@ import com.knowbird.utils.ScreenUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 成就清单
+ *
+ */
 public class AchievementActivity extends AppCompatActivity {
 
     private RecyclerView recyclerView;

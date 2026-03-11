@@ -4,6 +4,10 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
 
+/**
+ * ScreenUtils
+ *
+ */
 public class ScreenUtils {
 
     private static final String TAG = "ScreenUtils";

@@ -3,7 +3,9 @@ package com.knowbird.settings.item;
 import com.knowbird.settings.SettingsType;
 import com.knowbird.settings.inter.ISettingsItem;
 
-// SwitchItem.java
+/**
+ * 设置-SwitchItem
+ */
 public class SwitchItem implements ISettingsItem {
     private String id;
     private String title;

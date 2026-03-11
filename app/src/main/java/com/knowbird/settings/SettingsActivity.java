@@ -22,6 +22,10 @@ import com.knowbird.utils.ScreenUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * 设置 Activity
+ *
+ */
 public class SettingsActivity extends AppCompatActivity implements SettingsAdapter.OnSettingsItemClickListener {
 
     private Context mContext;
@@ -72,8 +76,6 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         // 其他分组
         list.add(new TitleItem("title_other", "其他"));
         list.add(new ClickItem("announcement", "公告"));
-
-        // 【拓展演示】其他分组新增一项，只需加一行代码
         list.add(new ClickItem("clear_cache", "清除缓存"));
 
         return list;

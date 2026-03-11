@@ -3,7 +3,9 @@ package com.knowbird.settings.item;
 import com.knowbird.settings.SettingsType;
 import com.knowbird.settings.inter.ISettingsItem;
 
-// TitleItem.java
+/**
+ * 设置-标题Item
+ */
 public class TitleItem implements ISettingsItem {
     private String id;
     private String title;

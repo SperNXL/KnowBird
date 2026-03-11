@@ -3,7 +3,9 @@ package com.knowbird.settings.item;
 import com.knowbird.settings.SettingsType;
 import com.knowbird.settings.inter.ISettingsItem;
 
-// ClickItem.java
+/**
+ * 设置-点击Item
+ */
 public class ClickItem implements ISettingsItem {
     private String id;
     private String title;

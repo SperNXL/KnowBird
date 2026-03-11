@@ -11,6 +11,9 @@ import com.knowbird.view.ListItemView;
 
 import java.util.List;
 
+/**
+ * MainActivity 识别鸟类Adapter
+ */
 public class BirdAdapter extends RecyclerView.Adapter<BirdAdapter.ViewHolder> {
 
     private List<BirdItem> dataList;

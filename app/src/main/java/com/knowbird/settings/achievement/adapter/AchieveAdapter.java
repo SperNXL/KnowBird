@@ -21,6 +21,10 @@ import com.knowbird.settings.achievement.bean.AchieveBean;
 
 import java.util.List;
 
+/**
+ * 成就清单-item的adapter
+ *
+ */
 public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHolder> {
 
     private List<AchieveBean> dataList;

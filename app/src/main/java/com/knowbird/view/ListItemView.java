@@ -11,6 +11,10 @@ import android.widget.TextView;
 
 import com.knowbird.R;
 
+/**
+ * MainActivity 识别List
+ *
+ */
 public class ListItemView extends FrameLayout {
 
     private ImageView ivIcon;
