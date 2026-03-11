@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,7 +31,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
 
     private Context mContext;
 
-    private Intent achievementIntent;
+    private static final String TAG = "SettingsActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,10 +60,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
         List<ISettingsItem> list = new ArrayList<>();
 
         // 顶部独立项
-        list.add(new ClickItem("achievement", "成就清单"));
-        // TODO: 2026/3/10 将intent放入clickIten，后期就不用在前面声明intent
-        achievementIntent = new Intent(this, AchievementActivity.class);
-        list.add(new ClickItem("offline", "离线数据包"));
+        list.add(new ClickItem("achievement", "成就清单",
+                new Intent(this, AchievementActivity.class)));
+        list.add(new ClickItem("offline", "离线数据包", null));
 
         // 通用分组
         list.add(new TitleItem("title_general", "通用"));
@@ -75,15 +75,15 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
 
         // 其他分组
         list.add(new TitleItem("title_other", "其他"));
-        list.add(new ClickItem("announcement", "公告"));
-        list.add(new ClickItem("clear_cache", "清除缓存"));
+        list.add(new ClickItem("announcement", "公告", null));
+        list.add(new ClickItem("clear_cache", "清除缓存", null));
 
         return list;
     }
 
     // 事件处理
     @Override
-    public void onItemClicked(String itemId) {
+    public void onItemClicked(String itemId, Intent intent) {
         switch (itemId) {
             case "announcement":
                 // 处理公告点击
@@ -92,7 +92,11 @@ public class SettingsActivity extends AppCompatActivity implements SettingsAdapt
                 // 处理清除缓存
                 break;
             case "achievement":
-                startActivity(achievementIntent);
+                if (intent == null) {
+                    Log.e(TAG, "onItemClicked: intent is null");
+                    return;
+                }
+                startActivity(intent);
                 break;
         }
     }

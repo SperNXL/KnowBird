@@ -1,5 +1,7 @@
 package com.knowbird.settings.item;
 
+import android.content.Intent;
+
 import com.knowbird.settings.SettingsType;
 import com.knowbird.settings.inter.ISettingsItem;
 
@@ -10,9 +12,16 @@ public class ClickItem implements ISettingsItem {
     private String id;
     private String title;
 
-    public ClickItem(String id, String title) {
+    private Intent intent;
+
+    public ClickItem(String id, String title, Intent intent) {
+        this.intent = intent;
         this.id = id;
         this.title = title;
+    }
+
+    public Intent getIntent() {
+        return intent;
     }
 
     @Override

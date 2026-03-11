@@ -1,5 +1,6 @@
 package com.knowbird.settings.adapter;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -134,7 +135,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             // 条目点击监听
             itemView.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onItemClicked(item.getId());
+                    listener.onItemClicked(item.getId(), item.getIntent());
                 }
             });
         }
@@ -142,7 +143,7 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     // ===================== 事件回调接口 =====================
     public interface OnSettingsItemClickListener {
-        void onItemClicked(String itemId);
+        void onItemClicked(String itemId, Intent intent);
         void onSwitchChanged(String itemId, boolean isChecked);
     }
 }
