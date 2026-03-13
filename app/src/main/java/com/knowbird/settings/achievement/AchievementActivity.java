@@ -2,7 +2,6 @@ package com.knowbird.settings.achievement;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,7 +11,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +19,6 @@ import com.knowbird.BaseActivity;
 import com.knowbird.R;
 import com.knowbird.settings.achievement.adapter.AchieveAdapter;
 import com.knowbird.settings.achievement.bean.AchieveBean;
-import com.knowbird.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;

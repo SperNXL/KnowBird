@@ -2,7 +2,6 @@ package com.knowbird;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
@@ -11,14 +10,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.knowbird.adapter.BirdAdapter;
 import com.knowbird.settings.SettingsActivity;
 import com.knowbird.utils.KeyBoardUtils;
-import com.knowbird.utils.ScreenUtils;
 
 import java.util.ArrayList;
 import java.util.List;
