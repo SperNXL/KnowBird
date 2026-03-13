@@ -35,6 +35,11 @@ public class SettingsActivity extends BaseActivity implements SettingsAdapter.On
     private static final String TAG = "SettingsActivity";
 
     @Override
+    protected View getRootView() {
+        return getWindow().getDecorView().getRootView();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mContext = getApplicationContext();
@@ -44,16 +49,8 @@ public class SettingsActivity extends BaseActivity implements SettingsAdapter.On
 
     private void initView() {
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
-        View rootView = findViewById(android.R.id.content);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new SettingsAdapter(getSettingsData(), this));
-        // 添加状态栏&导航栏高度的padding
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int statusBarHeight = ScreenUtils.getStatusBarHeight(mContext);
-            int navigationBarHeight = ScreenUtils.getNavigationBarHeight(mContext);
-            rootView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
-
-        }
     }
 
     // 构建数据源。新增条目/分组

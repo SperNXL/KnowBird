@@ -26,6 +26,11 @@ public class WikiActivity extends BaseActivity {
     private Context mContext;
 
     @Override
+    protected View getRootView() {
+        return getWindow().getDecorView().getRootView();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -36,18 +41,9 @@ public class WikiActivity extends BaseActivity {
     }
 
     private void initView() {
-        View rootView = findViewById(android.R.id.content);
         TextView cnName = findViewById(R.id.cn_name);
         Intent intent = getIntent();
         String mName = intent.getStringExtra("m_name");
         cnName.setText(mName);
-
-        // 添加状态栏&导航栏高度的padding
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int statusBarHeight = ScreenUtils.getStatusBarHeight(mContext);
-            int navigationBarHeight = ScreenUtils.getNavigationBarHeight(mContext);
-            rootView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
-
-        }
     }
 }

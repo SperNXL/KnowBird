@@ -1,8 +1,10 @@
 package com.knowbird.utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 
 /**
  * ScreenUtils
@@ -75,5 +77,23 @@ public class ScreenUtils {
         }
         Log.d(TAG, "getStatusBarHeight: " + navigationBarHeight);
         return navigationBarHeight;
+    }
+
+    /**
+     * 状态栏&导航栏高度的padding
+     *
+     * @param mContext
+     * @param rootView
+     */
+    public static void setSystemBarHeight(Context mContext, View rootView) {
+        if (mContext == null || rootView == null) {
+            Log.e(TAG, "setSystemBarHeight: mContext or rootView is null");
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            int statusBarHeight = ScreenUtils.getStatusBarHeight(mContext);
+            int navigationBarHeight = ScreenUtils.getNavigationBarHeight(mContext);
+            rootView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
+        }
     }
 }

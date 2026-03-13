@@ -42,6 +42,11 @@ public class AchievementActivity extends BaseActivity {
     private Context mContext;
 
     @Override
+    protected View getRootView() {
+        return getWindow().getDecorView().getRootView();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_achievement);
@@ -67,15 +72,6 @@ public class AchievementActivity extends BaseActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new AchieveAdapter(dataList);
         recyclerView.setAdapter(adapter);
-        View rootView = findViewById(android.R.id.content);
-
-        // 添加状态栏&导航栏高度的padding
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int statusBarHeight = ScreenUtils.getStatusBarHeight(mContext);
-            int navigationBarHeight = ScreenUtils.getNavigationBarHeight(mContext);
-            rootView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
-
-        }
 
         adapter.setReadOnly(isReadOnly);
         switchReadOnly.setChecked(isReadOnly);

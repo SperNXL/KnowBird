@@ -36,6 +36,11 @@ public class MainActivity extends BaseActivity {
     private Context mContext;
 
     @Override
+    protected View getRootView() {
+        return getWindow().getDecorView().getRootView();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
@@ -68,10 +73,7 @@ public class MainActivity extends BaseActivity {
         unknownData = new ArrayList<>();
 
         // 设置列表
-        allAdapter = new BirdAdapter(mContext, allData);
-        imageAdapter = new BirdAdapter(mContext, imageData);
-        audioAdapter = new BirdAdapter(mContext, audioData);
-        unknowAdapter = new BirdAdapter(mContext, unknownData);
+        initAdapter(this);
         recyclerView.setAdapter(allAdapter);
         checkDataAndUpdateView(allData);
 
@@ -113,6 +115,13 @@ public class MainActivity extends BaseActivity {
         llCamera.setOnClickListener(v -> showToast("打开相机"));
     }
 
+    private void initAdapter(Context context) {
+        allAdapter = new BirdAdapter(context, allData);
+        imageAdapter = new BirdAdapter(context, imageData);
+        audioAdapter = new BirdAdapter(context, audioData);
+        unknowAdapter = new BirdAdapter(context, unknownData);
+    }
+
     private void initView() {
         btnSetting = findViewById(R.id.iv_settings);
 
@@ -127,14 +136,6 @@ public class MainActivity extends BaseActivity {
         llAlbum = findViewById(R.id.ll_album);
         llListenBird = findViewById(R.id.ll_listen_bird);
         llCamera = findViewById(R.id.ll_camera);
-
-        View rootView = findViewById(android.R.id.content);
-        // 添加状态栏&导航栏高度的padding
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            int statusBarHeight = ScreenUtils.getStatusBarHeight(mContext);
-            int navigationBarHeight = ScreenUtils.getNavigationBarHeight(mContext);
-            rootView.setPadding(0, statusBarHeight, 0, navigationBarHeight);
-        }
     }
 
     // 更新按钮选中状态
