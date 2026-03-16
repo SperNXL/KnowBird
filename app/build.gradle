@@ -2,6 +2,27 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+//读取 local.properties 中的字段(API Key等信息保存在local.properties中)
+def loadKuaiTongConfig() {
+    Properties properties = new Properties()
+    File localProperties = rootProject.file("local.properties")
+    if (localProperties.exists()) {
+        try {
+            properties.load(new FileInputStream(localProperties))
+        } catch (Exception e) {
+            e.printStackTrace()
+        }
+    }
+
+    return [
+            ocrKey: properties.getProperty('KuaiTongOCR_ACCESS_KEY', ''),
+            ocrSecret: properties.getProperty('KuaiTongOCR_ACCESS_SECRET', ''),
+            ocrToken: properties.getProperty('KuaiTongOCR_Token', '')
+    ]
+}
+
+def kuaiTongConfig = loadKuaiTongConfig()
+
 android {
     namespace 'com.knowbird'
     compileSdk {
@@ -18,12 +39,25 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+
+        buildFeatures {
+            buildConfig true
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "KUAI_TONG_ACCESS_KEY", "\"${kuaiTongConfig.ocrKey}\""
+            buildConfigField "String", "KUAI_TONG_ACCESS_SECRET", "\"${kuaiTongConfig.ocrSecret}\""
+            buildConfigField "String", "KUAI_TONG_TOKEN", "\"${kuaiTongConfig.ocrToken}\""
+        }
+        debug {
+            minifyEnabled false
+            buildConfigField "String", "KUAI_TONG_ACCESS_KEY", "\"${kuaiTongConfig.ocrKey}\""
+            buildConfigField "String", "KUAI_TONG_ACCESS_SECRET", "\"${kuaiTongConfig.ocrSecret}\""
+            buildConfigField "String", "KUAI_TONG_TOKEN", "\"${kuaiTongConfig.ocrToken}\""
         }
     }
     compileOptions {
@@ -39,6 +73,8 @@ dependencies {
     implementation libs.constraintlayout
     implementation 'com.github.bumptech.glide:glide:4.16.0'
     implementation 'com.airbnb.android:lottie:6.4.0'
+    implementation 'org.apache.httpcomponents:httpclient:4.5.13'
+    implementation 'org.apache.httpcomponents:httpmime:4.5.13'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.16.0'
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
