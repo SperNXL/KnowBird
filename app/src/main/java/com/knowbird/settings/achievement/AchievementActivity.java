@@ -2,6 +2,8 @@ package com.knowbird.settings.achievement;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -11,6 +13,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -28,7 +32,7 @@ import java.util.List;
  *
  */
 public class AchievementActivity extends BaseActivity {
-
+    private static final int REQUEST_ACHIEVE_ITEM_ADD = 1001;
     private RecyclerView recyclerView;
     private AchieveAdapter adapter;
     private List<AchieveBean> dataList = new ArrayList<>();
@@ -37,6 +41,22 @@ public class AchievementActivity extends BaseActivity {
     private TextView tvSummary;
 
     private Context mContext;
+
+    private final ActivityResultLauncher<Intent> editLauncher =
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
+                    result -> {
+                if (result != null && result.getResultCode() == RESULT_OK
+                        && result.getData() != null) {
+                    Intent data = result.getData();
+                    String name = data.getStringExtra("name");
+                    String enName = data.getStringExtra("enName");
+                    String date = data.getStringExtra("date");
+                    String uriStr = data.getStringExtra("uri");
+                    Uri uri = Uri.parse(uriStr);
+                    dataList.add(new AchieveBean((adapter.getItemCount() + 1), name, enName, 5, date, uri));
+                    adapter.notifyDataSetChanged();
+                }
+            });
 
     @Override
     protected View getRootView() {
@@ -85,7 +105,9 @@ public class AchievementActivity extends BaseActivity {
         // 添加
         btnAdd.setOnClickListener(v -> {
             if (!isReadOnly) {
-                showAddDialog();
+                Intent intent = new Intent(this, EditActivity.class);
+                editLauncher.launch(intent);
+//                showAddDialog();
             }
         });
 
@@ -98,8 +120,8 @@ public class AchievementActivity extends BaseActivity {
 
     private void initData() {
         // 模拟数据
-        dataList.add(new AchieveBean(1, "喜鹊", "Oriental Magpie", "6.13", "2026-02-16"));
-        dataList.add(new AchieveBean(2, "老虎", "Tiger", "8.5", "2026-02-15"));
+        dataList.add(new AchieveBean(1, "喜鹊", "Oriental Magpie", 6, "2026-02-16", null));
+        dataList.add(new AchieveBean(2, "老虎", "Tiger", 8, "2026-02-15", null));
         adapter.notifyDataSetChanged();
     }
 
@@ -123,7 +145,8 @@ public class AchievementActivity extends BaseActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("添加成就");
         builder.setPositiveButton("添加", (dialog, which) -> {
-            dataList.add(new AchieveBean(dataList.size(), "新物种", "New Species", "5.0", "2026-03-10"));
+            dataList.add(new AchieveBean(dataList.size() + 1, "新物种",
+                    "New Species", 5, "2026-03-10", null));
             adapter.notifyItemInserted(dataList.size() - 1);
             updateSummary();
         });

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,6 +62,11 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         holder.tvName.setText(bean.getName());
         holder.tvInfo.setText(String.format("%s\n稀有度：%s  %s",
                 bean.getEnName(), bean.getRarity(), bean.getDate()));
+        if (bean.getUri() == null) {
+            holder.tvImageView.setImageResource(R.drawable.ic_image_error);
+        } else {
+            holder.tvImageView.setImageURI(bean.getUri());
+        }
 
         // 只读模式下 CheckBox 隐藏且不可点击；点击item进入wiki
         // 非只读模式下 显示 CheckBox 并绑定选中状态；点击item进入编辑
@@ -115,12 +121,14 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         CheckBox checkBox;
         TextView tvName;
         TextView tvInfo;
+        ImageView tvImageView;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             checkBox = itemView.findViewById(R.id.checkBox);
             tvName = itemView.findViewById(R.id.tv_name);
             tvInfo = itemView.findViewById(R.id.tv_info);
+            tvImageView = itemView.findViewById(R.id.tv_item_view);
         }
     }
 

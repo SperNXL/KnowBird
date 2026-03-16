@@ -43,12 +43,11 @@
         app:cardCornerRadius="8dp">
 
         <ImageView
-            android:id="@+id/iv_item_icon"
+            android:id="@+id/tv_item_view"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:scaleType="centerCrop"
-            android:contentDescription="item_image"
-            android:src="@drawable/bird_sample"/>
+            android:contentDescription="item_image"/>
 
     </androidx.cardview.widget.CardView>
 
