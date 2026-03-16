@@ -72,7 +72,6 @@ public class KuaiTongOcrUtils {
         Map<String, String> mapParam = new HashMap<>();
         mapParam.put(ACCESS_KEY, "APPID_BlIW67d7y540E8Pz");
         mapParam.put(ACCESS_SECRET, "4e2f5fed60c1189fc07a61de89ac1908");
-//        String url = "https://ai.inspirvision.cn/s/api/domesticBirdType";
         String url = "https://inspirvision.cn/s/api/getAccessToken";
         kuaiTongGet(url, mapParam);
     }
