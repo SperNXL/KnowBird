@@ -33,13 +33,17 @@ import java.util.List;
  */
 public class AchievementActivity extends BaseActivity {
     private static final int REQUEST_ACHIEVE_ITEM_ADD = 1001;
+    private static final float UNABLE_CLICK_ALPHA = 0.5f;
+    private static final float ABLE_CLICK_ALPHA = 1f;
     private RecyclerView recyclerView;
     private AchieveAdapter adapter;
     private List<AchieveBean> dataList = new ArrayList<>();
     private Switch switchReadOnly;
     private boolean isReadOnly = true;
     private TextView tvSummary;
-
+    private ImageButton btnAdd;
+    private ImageButton btnDelete;
+    private ImageButton btnSave;
     private Context mContext;
 
     private final ActivityResultLauncher<Intent> editLauncher =
@@ -81,9 +85,9 @@ public class AchievementActivity extends BaseActivity {
         tvSummary = findViewById(R.id.tv_summary);
         recyclerView = findViewById(R.id.recyclerView);
         switchReadOnly = findViewById(R.id.switch_read_only);
-        ImageButton btnAdd = findViewById(R.id.btn_add);
-        ImageButton btnDelete = findViewById(R.id.btn_delete);
-        ImageButton btnSave = findViewById(R.id.btn_save);
+        btnAdd = findViewById(R.id.btn_add);
+        btnDelete = findViewById(R.id.btn_delete);
+        btnSave = findViewById(R.id.btn_save);
         ImageView ivMore = findViewById(R.id.iv_more);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -92,10 +96,15 @@ public class AchievementActivity extends BaseActivity {
 
         adapter.setReadOnly(isReadOnly);
         switchReadOnly.setChecked(isReadOnly);
+        setBtnAlpha(UNABLE_CLICK_ALPHA);
 
         // 只读模式开关
         switchReadOnly.setOnCheckedChangeListener((buttonView, isChecked) -> {
             isReadOnly = isChecked;
+            if (isReadOnly)
+                setBtnAlpha(UNABLE_CLICK_ALPHA);
+            else
+                setBtnAlpha(ABLE_CLICK_ALPHA);
             adapter.setReadOnly(isReadOnly);
             // 切换模式时清除选中状态
             adapter.clearSelection();
@@ -104,11 +113,12 @@ public class AchievementActivity extends BaseActivity {
 
         // 添加
         btnAdd.setOnClickListener(v -> {
-            if (!isReadOnly) {
-                Intent intent = new Intent(this, EditActivity.class);
-                editLauncher.launch(intent);
-//                showAddDialog();
+            if (isReadOnly) {
+                Toast.makeText(this, "关闭已读模式添加物种", Toast.LENGTH_SHORT).show();
+                return;
             }
+            Intent intent = new Intent(this, EditActivity.class);
+            editLauncher.launch(intent);
         });
 
         // 更多菜单
@@ -116,6 +126,12 @@ public class AchievementActivity extends BaseActivity {
 
         // 初始更新统计
         updateSummary();
+    }
+
+    private void setBtnAlpha(float alpha) {
+        btnAdd.setAlpha(alpha);
+        btnDelete.setAlpha(alpha);
+        btnSave.setAlpha(alpha);
     }
 
     private void initData() {
