@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.knowbird.utils.ScreenUtils;
+import com.knowbird.utils.ToastUtils;
 
 /**
  * 基类
@@ -22,6 +23,8 @@ public abstract class BaseActivity extends AppCompatActivity {
         // 强制设置为竖屏
         setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         ScreenUtils.setSystemBarHeight(getActivityContext(), getRootView());
+        // 初始化 Toast
+        ToastUtils.init(getApplicationContext());
     }
 
     private Context getActivityContext() {

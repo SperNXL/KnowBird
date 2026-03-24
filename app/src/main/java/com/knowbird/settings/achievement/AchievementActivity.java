@@ -23,6 +23,7 @@ import com.knowbird.BaseActivity;
 import com.knowbird.R;
 import com.knowbird.settings.achievement.adapter.AchieveAdapter;
 import com.knowbird.settings.achievement.bean.AchieveBean;
+import com.knowbird.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -114,7 +115,7 @@ public class AchievementActivity extends BaseActivity {
         // 添加
         btnAdd.setOnClickListener(v -> {
             if (isReadOnly) {
-                Toast.makeText(this, "关闭已读模式添加物种", Toast.LENGTH_SHORT).show();
+                ToastUtils.showShort("关闭已读模式添加物种");
                 return;
             }
             Intent intent = new Intent(this, EditActivity.class);
