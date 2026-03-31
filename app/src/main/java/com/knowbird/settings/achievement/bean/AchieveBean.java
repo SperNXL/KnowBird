@@ -1,39 +1,80 @@
 package com.knowbird.settings.achievement.bean;
 
-import android.net.Uri;
+import androidx.annotation.Nullable;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
 
 /**
  * 成就清单的实体类
  * 用于封装列表项的所有数据
  */
+@Entity(tableName = "achieve_bean")
 public class AchieveBean {
+    @PrimaryKey(autoGenerate = true)
     private int id;
 
     // 中文名称
-    private String name;
+    @ColumnInfo(name = "cnName")
+    private String cnName;
 
     // 英文名称
+    @ColumnInfo(name = "enName")
     private String enName;
 
     // 稀有度（如：6.13，从1——10，分值越高越稀有）
+    @ColumnInfo(name = "rarity")
     private int rarity;
 
     // 日期（拍摄/发现2026-02-16）
+    @ColumnInfo(name = "date")
     private String date;
 
-    // 第一张图片的 uri
-    private Uri uri;
+    // 多个图片的 uri,
+    @ColumnInfo(name = "uris")
+    private String uris;
 
     public AchieveBean() {
     }
 
-    public AchieveBean(int id, String name, String enName, int rarity, String date, Uri uri) {
-        this.id = id;
-        this.name = name;
+    /**
+     * 编辑构造
+     *
+     * @param cnName
+     * @param enName
+     * @param rarity
+     * @param date
+     * @param uris
+     */
+    @Ignore
+    public AchieveBean(@Nullable String cnName, @Nullable String enName,
+                       int rarity, @Nullable String date, @Nullable String uris) {
+        this.cnName = cnName;
         this.enName = enName;
         this.rarity = rarity;
         this.date = date;
-        this.uri = uri;
+        this.uris = uris;
+    }
+
+    /**
+     * 临时 后期删除
+     *
+     * @param id
+     * @param name
+     * @param enName
+     * @param rarity
+     * @param date
+     * @param uris
+     */
+    @Ignore
+    public AchieveBean(int id, String name, String enName, int rarity, String date, @Nullable String uris) {
+        this.id = id;
+        this.cnName = name;
+        this.enName = enName;
+        this.rarity = rarity;
+        this.date = date;
+        this.uris = uris;
     }
 
     public int getId() {
@@ -44,12 +85,12 @@ public class AchieveBean {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getCnName() {
+        return cnName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setCnName(String cnName) {
+        this.cnName = cnName;
     }
 
     public String getEnName() {
@@ -76,11 +117,11 @@ public class AchieveBean {
         this.date = date;
     }
 
-    public Uri getUri() {
-        return uri;
+    public String getUris() {
+        return uris;
     }
 
-    public void setUri(Uri uri) {
-        this.uri = uri;
+    public void setUris(String uris) {
+        this.uris = uris;
     }
 }

@@ -1,6 +1,5 @@
 package com.knowbird.settings.achievement;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -16,11 +15,13 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.knowbird.BaseActivity;
 import com.knowbird.R;
+import com.knowbird.data.viewmodel.AchieveViewModel;
 import com.knowbird.settings.achievement.adapter.AchieveAdapter;
 import com.knowbird.settings.achievement.bean.AchieveBean;
 import com.knowbird.utils.ToastUtils;
@@ -47,6 +48,8 @@ public class AchievementActivity extends BaseActivity {
     private ImageButton btnSave;
     private Context mContext;
 
+    private AchieveViewModel viewModel;
+
     private final ActivityResultLauncher<Intent> editLauncher =
             registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
                     result -> {
@@ -57,8 +60,9 @@ public class AchievementActivity extends BaseActivity {
                     String enName = data.getStringExtra("enName");
                     String date = data.getStringExtra("date");
                     String uriStr = data.getStringExtra("uri");
+                    // TODO: 2026/3/31 uris需要将list转为string，使用时将string转为list
                     Uri uri = Uri.parse(uriStr);
-                    dataList.add(new AchieveBean((adapter.getItemCount() + 1), name, enName, 5, date, uri));
+                    dataList.add(new AchieveBean((adapter.getItemCount() + 1), name, enName, 5, date, uriStr));
                     adapter.notifyDataSetChanged();
                 }
             });
@@ -75,7 +79,7 @@ public class AchievementActivity extends BaseActivity {
         mContext = getApplicationContext();
 
         initView();
-        initData();
+        initViewModel();
     }
 
     private void initView() {
@@ -107,9 +111,7 @@ public class AchievementActivity extends BaseActivity {
             else
                 setBtnAlpha(ABLE_CLICK_ALPHA);
             adapter.setReadOnly(isReadOnly);
-            // 切换模式时清除选中状态
             adapter.clearSelection();
-            updateSummary();
         });
 
         // 添加
@@ -120,6 +122,26 @@ public class AchievementActivity extends BaseActivity {
             }
             Intent intent = new Intent(this, EditActivity.class);
             editLauncher.launch(intent);
+        });
+
+        // 保存
+        // TODO: 2026/3/31 添加新物种时，可能会编辑已添加的物种；需要优化
+        btnSave.setOnClickListener(v -> {
+            if (isReadOnly) {
+                return;
+            }
+            viewModel.insertAll(dataList);
+        });
+
+        // 删除
+        btnDelete.setOnClickListener(v -> {
+            if (isReadOnly) {
+                return;
+            }
+            // TODO: 2026/3/31 优化此处，按理有observe，就不需要使用submitList了
+            viewModel.deleteAchieveBeans(adapter.getSelectedList());
+            adapter.clearSelection();
+            adapter.submitList(dataList);
         });
 
         // 更多菜单
@@ -135,11 +157,12 @@ public class AchievementActivity extends BaseActivity {
         btnSave.setAlpha(alpha);
     }
 
-    private void initData() {
-        // 模拟数据
-        dataList.add(new AchieveBean(1, "喜鹊", "Oriental Magpie", 6, "2026-02-16", null));
-        dataList.add(new AchieveBean(2, "老虎", "Tiger", 8, "2026-02-15", null));
-        adapter.notifyDataSetChanged();
+    private void initViewModel() {
+        viewModel = new ViewModelProvider(this).get(AchieveViewModel.class);
+        viewModel.getAllAchieveBeans().observe(this, achieveBeans -> {
+            adapter.submitList(achieveBeans);
+            updateSummary();
+        });
     }
 
     // 显示更多菜单
@@ -155,19 +178,6 @@ public class AchievementActivity extends BaseActivity {
             return true;
         });
         popup.show();
-    }
-
-    // TODO: 2026/3/10 添加 添加物种弹窗
-    private void showAddDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("添加成就");
-        builder.setPositiveButton("添加", (dialog, which) -> {
-            dataList.add(new AchieveBean(dataList.size() + 1, "新物种",
-                    "New Species", 5, "2026-03-10", null));
-            adapter.notifyItemInserted(dataList.size() - 1);
-            updateSummary();
-        });
-        builder.show();
     }
 
     // 更新底部统计信息

@@ -14,12 +14,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.knowbird.R;
 import com.knowbird.settings.achievement.WikiActivity;
 import com.knowbird.settings.achievement.bean.AchieveBean;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -29,8 +31,10 @@ import java.util.List;
 public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHolder> {
 
     private List<AchieveBean> dataList;
+
     // 用于保存选中状态
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
+
     private boolean isReadOnly;
 
     public AchieveAdapter(List<AchieveBean> dataList) {
@@ -59,13 +63,13 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         AchieveBean bean = dataList.get(position);
 
-        holder.tvName.setText(bean.getName());
+        holder.tvName.setText(bean.getCnName());
         holder.tvInfo.setText(String.format("%s\n稀有度：%s  %s",
                 bean.getEnName(), bean.getRarity(), bean.getDate()));
-        if (bean.getUri() == null) {
+        if (bean.getUris() == null) {
             holder.tvImageView.setImageResource(R.drawable.ic_image_error);
         } else {
-            holder.tvImageView.setImageURI(bean.getUri());
+//            holder.tvImageView.setImageURI(bean.getUris());
         }
 
         // 只读模式下 CheckBox 隐藏且不可点击；点击item进入wiki
@@ -77,7 +81,7 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
                 Context context = v.getContext();
                 Bundle bundle = new Bundle();
                 bundle.putInt("m_id", bean.getId());
-                bundle.putString("m_name", bean.getName());
+                bundle.putString("m_name", bean.getCnName());
                 bundle.putString("m_en_name", bean.getEnName());
                 Intent wikiIntent = new Intent(context, WikiActivity.class);
                 wikiIntent.putExtras(bundle);
@@ -97,11 +101,36 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.checkBox.setChecked(selectedItems.get(position, false));
 
-            // 弹出编辑框
+            // TODO: 2026/3/31 弹出编辑框
             holder.itemView.setOnClickListener(v -> {
                 showEditDialog(v.getContext(), bean, position);
             });
         }
+    }
+
+    public void submitList(List<AchieveBean> newList) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallBack(dataList, newList));
+
+        dataList.clear();
+        if (newList != null) {
+            dataList.addAll(newList);
+        }
+
+        diffResult.dispatchUpdatesTo(this);
+    }
+
+    /**
+     * 获取所有选中的 AchieveBean
+     */
+    public List<AchieveBean> getSelectedList() {
+        List<AchieveBean> selectedList = new ArrayList<>();
+        for (int i = 0; i < selectedItems.size(); i++) {
+            int position = selectedItems.keyAt(i);
+            if (selectedItems.valueAt(i) && position >= 0 && position < dataList.size()) {
+                selectedList.add(dataList.get(position));
+            }
+        }
+        return selectedList;
     }
 
     /**
@@ -115,6 +144,18 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
     @Override
     public int getItemCount() {
         return dataList == null ? 0 : dataList.size();
+    }
+
+    // TODO: 2026/3/10 弹出编辑弹窗，与添加弹窗是一个弹窗
+    private void showEditDialog(Context context, AchieveBean bean, int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        builder.setTitle("编辑成就");
+        builder.setMessage("正在编辑 " + bean.getCnName());
+        builder.setPositiveButton("保存", (dialog, which) -> {
+            // 这里可以修改 bean 的数据
+            Toast.makeText(context, "已保存", Toast.LENGTH_SHORT).show();
+        });
+        builder.show();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {
@@ -132,15 +173,41 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         }
     }
 
-    // TODO: 2026/3/10 弹出编辑弹窗，与添加弹窗是一个弹窗
-    private void showEditDialog(Context context, AchieveBean bean, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("编辑成就");
-        builder.setMessage("正在编辑 " + bean.getName());
-        builder.setPositiveButton("保存", (dialog, which) -> {
-            // 这里可以修改 bean 的数据
-            Toast.makeText(context, "已保存", Toast.LENGTH_SHORT).show();
-        });
-        builder.show();
+    static class DiffCallBack extends DiffUtil.Callback {
+        private final List<AchieveBean> oldList;
+        private final List<AchieveBean> newList;
+
+        public DiffCallBack(List<AchieveBean> oldList, List<AchieveBean> newList) {
+            this.oldList = oldList;
+            this.newList = newList;
+        }
+
+        // 旧列表大小
+        @Override
+        public int getOldListSize() {
+            return oldList.size();
+        }
+
+        // 新列表大小
+        @Override
+        public int getNewListSize() {
+            return newList == null ? 0 : newList.size();
+        }
+
+        // 判断是否是同一个 item（根据唯一 id）
+        @Override
+        public boolean areItemsTheSame(int oldItemPosition, int newItemPosition) {
+            AchieveBean oldBean = oldList.get(oldItemPosition);
+            AchieveBean newBean = newList.get(newItemPosition);
+            return oldBean.getId() == newBean.getId();
+        }
+
+        // 判断内容是否一样（内容一样就不刷新）
+        @Override
+        public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
+            AchieveBean oldBean = oldList.get(oldItemPosition);
+            AchieveBean newBean = newList.get(newItemPosition);
+            return oldBean.equals(newBean);
+        }
     }
 }
