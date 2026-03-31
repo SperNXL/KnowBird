@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.knowbird.BaseActivity;
 import com.knowbird.R;
 import com.knowbird.settings.achievement.adapter.ImageAdapter;
+import com.knowbird.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -88,7 +89,7 @@ public class EditActivity extends BaseActivity {
             result.putExtra("date", date);
             result.putExtra("uri", firstImageStr);
             setResult(RESULT_OK, result);
-            Toast.makeText(this, "保存成功", Toast.LENGTH_SHORT).show();
+            ToastUtils.showShort("添加成功");
             finish();
         });
     }
