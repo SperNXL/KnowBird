@@ -5,9 +5,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import com.knowbird.utils.KuaiTongOcrUtils;
+import com.knowbird.utils.StringUtils;
 
-import java.io.FileInputStream;
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -43,5 +44,22 @@ public class ExampleUnitTest {
         System.out.println("accessKey:" + accessKey + "accessSecret:" + accessSecret +
                 "\n token:" + token);
         assertEquals(false, isEmpty);
+    }
+
+    @Test
+    public void StringTest() {
+        List<String> objects = new ArrayList<>();
+        objects.add("aaa");
+        objects.add("bbb");
+        objects.add("ccc");
+        objects.add("ddd");
+        String string = objects.toString();
+        System.out.println("------------ List -----------");
+        System.out.println(string);
+        List<String> stringList = StringUtils.string2List(string);
+        System.out.println("------------ string2List -----------");
+        for (String s : stringList) {
+            System.out.println(s);
+        }
     }
 }

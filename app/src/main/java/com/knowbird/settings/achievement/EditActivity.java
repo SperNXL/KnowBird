@@ -1,6 +1,8 @@
 package com.knowbird.settings.achievement;
 
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
@@ -31,6 +33,9 @@ public class EditActivity extends BaseActivity {
             registerForActivityResult(new ActivityResultContracts.GetContent(), uri -> {
                 if (uri != null) {
                     if (imageList.size() < MAX_IMAGES) {
+                        // 通过保存图片路径，访问图片；
+                        // 就不需要再存一个图片节省空间
+                        grantUriPermission(uri);
                         imageList.add(uri.toString());
                         // 添加后刷新，按钮自动后移
                         adapter.notifyDataSetChanged();
@@ -82,15 +87,33 @@ public class EditActivity extends BaseActivity {
             String name = etName.getText().toString();
             String enName = etEnName.getText().toString();
             String date = etDate.getText().toString();
-            String firstImageStr = imageList.get(0);
+            String imageListString = imageList.toString();
             Intent result = getIntent();
-            result.putExtra("name", name);
+            result.putExtra("cnName", name);
             result.putExtra("enName", enName);
             result.putExtra("date", date);
-            result.putExtra("uri", firstImageStr);
+            result.putExtra("uris", imageListString);
             setResult(RESULT_OK, result);
             ToastUtils.showShort("添加成功");
             finish();
         });
+    }
+
+    // 获取访问图片权限
+    private void grantUriPermission(Uri uri) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                int flags = Intent.FLAG_GRANT_READ_URI_PERMISSION;
+                getContentResolver().takePersistableUriPermission(uri, flags);
+            }
+
+            grantUriPermission(
+                    getPackageName(),
+                    uri,
+                    Intent.FLAG_GRANT_READ_URI_PERMISSION
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

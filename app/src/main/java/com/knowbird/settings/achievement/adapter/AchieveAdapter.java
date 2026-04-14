@@ -3,6 +3,7 @@ package com.knowbird.settings.achievement.adapter;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.knowbird.R;
 import com.knowbird.settings.achievement.WikiActivity;
 import com.knowbird.settings.achievement.bean.AchieveBean;
+import com.knowbird.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +71,8 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         if (bean.getUris() == null) {
             holder.tvImageView.setImageResource(R.drawable.ic_image_error);
         } else {
-//            holder.tvImageView.setImageURI(bean.getUris());
+            List<String> uris = StringUtils.string2List(bean.getUris());
+            holder.tvImageView.setImageURI(Uri.parse(uris.get(0)));
         }
 
         // 只读模式下 CheckBox 隐藏且不可点击；点击item进入wiki

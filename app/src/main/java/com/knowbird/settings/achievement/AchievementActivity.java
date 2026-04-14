@@ -2,7 +2,6 @@ package com.knowbird.settings.achievement;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -56,13 +55,11 @@ public class AchievementActivity extends BaseActivity {
                 if (result != null && result.getResultCode() == RESULT_OK
                         && result.getData() != null) {
                     Intent data = result.getData();
-                    String name = data.getStringExtra("name");
+                    String cnName = data.getStringExtra("cnName");
                     String enName = data.getStringExtra("enName");
                     String date = data.getStringExtra("date");
-                    String uriStr = data.getStringExtra("uri");
-                    // TODO: 2026/3/31 uris需要将list转为string，使用时将string转为list
-                    Uri uri = Uri.parse(uriStr);
-                    dataList.add(new AchieveBean((adapter.getItemCount() + 1), name, enName, 5, date, uriStr));
+                    String urisStr = data.getStringExtra("uris");
+                    dataList.add(new AchieveBean((adapter.getItemCount() + 1), cnName, enName, 5, date, urisStr));
                     adapter.notifyDataSetChanged();
                 }
             });
@@ -138,7 +135,7 @@ public class AchievementActivity extends BaseActivity {
             if (isReadOnly) {
                 return;
             }
-            // TODO: 2026/3/31 优化此处，按理有observe，就不需要使用submitList了
+            // TODO: 2026/3/31 优化此处，按理有observe，就不需要使用submitList了；此处还有bug
             viewModel.deleteAchieveBeans(adapter.getSelectedList());
             adapter.clearSelection();
             adapter.submitList(dataList);
