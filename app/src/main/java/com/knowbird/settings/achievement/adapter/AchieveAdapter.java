@@ -75,6 +75,16 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
             holder.tvImageView.setImageURI(Uri.parse(uris.get(0)));
         }
 
+        // 点击 CheckBox 改变选中状态
+        holder.checkBox.setOnClickListener(v -> {
+            if (selectedItems.get(position, false)) {
+                selectedItems.delete(position);
+            } else {
+                selectedItems.put(position, true);
+            }
+            notifyItemChanged(position);
+        });
+
         // 只读模式下 CheckBox 隐藏且不可点击；点击item进入wiki
         // 非只读模式下 显示 CheckBox 并绑定选中状态；点击item进入编辑
         if (isReadOnly) {
@@ -90,16 +100,6 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
                 wikiIntent.putExtras(bundle);
                 context.startActivity(wikiIntent);
             });
-
-            // 点击 CheckBox 改变选中状态
-            holder.checkBox.setOnClickListener(v -> {
-                if (selectedItems.get(position, false)) {
-                    selectedItems.delete(position);
-                } else {
-                    selectedItems.put(position, true);
-                }
-                notifyItemChanged(position);
-            });
         } else {
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.checkBox.setChecked(selectedItems.get(position, false));
@@ -114,10 +114,12 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
     public void submitList(List<AchieveBean> newList) {
         DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DiffCallBack(dataList, newList));
 
-        dataList.clear();
+        List<AchieveBean> tmpList = new ArrayList<>();
         if (newList != null) {
-            dataList.addAll(newList);
+            tmpList.addAll(newList);
         }
+        dataList.clear();
+        dataList.addAll(tmpList);
 
         diffResult.dispatchUpdatesTo(this);
     }

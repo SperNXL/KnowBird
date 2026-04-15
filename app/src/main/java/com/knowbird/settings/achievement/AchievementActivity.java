@@ -135,8 +135,9 @@ public class AchievementActivity extends BaseActivity {
             if (isReadOnly) {
                 return;
             }
-            // TODO: 2026/3/31 优化此处，按理有observe，就不需要使用submitList了；此处还有bug
-            viewModel.deleteAchieveBeans(adapter.getSelectedList());
+            List<AchieveBean> selectedList = adapter.getSelectedList();
+            viewModel.deleteAchieveBeans(selectedList);
+            dataList.removeAll(selectedList);
             adapter.clearSelection();
             adapter.submitList(dataList);
         });
@@ -157,7 +158,10 @@ public class AchievementActivity extends BaseActivity {
     private void initViewModel() {
         viewModel = new ViewModelProvider(this).get(AchieveViewModel.class);
         viewModel.getAllAchieveBeans().observe(this, achieveBeans -> {
-            adapter.submitList(achieveBeans);
+            if (dataList == null || dataList.isEmpty())
+                adapter.submitList(achieveBeans);
+            else
+                adapter.submitList(dataList);
             updateSummary();
         });
     }
