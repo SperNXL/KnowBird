@@ -44,7 +44,6 @@ public class AchievementActivity extends BaseActivity {
     private TextView tvSummary;
     private ImageButton btnAdd;
     private ImageButton btnDelete;
-    private ImageButton btnSave;
     private Context mContext;
 
     private AchieveViewModel viewModel;
@@ -60,6 +59,7 @@ public class AchievementActivity extends BaseActivity {
                     String date = data.getStringExtra("date");
                     String urisStr = data.getStringExtra("uris");
                     dataList.add(new AchieveBean((adapter.getItemCount() + 1), cnName, enName, 5, date, urisStr));
+                    viewModel.insertAll(dataList);
                     adapter.notifyDataSetChanged();
                 }
             });
@@ -89,7 +89,6 @@ public class AchievementActivity extends BaseActivity {
         switchReadOnly = findViewById(R.id.switch_read_only);
         btnAdd = findViewById(R.id.btn_add);
         btnDelete = findViewById(R.id.btn_delete);
-        btnSave = findViewById(R.id.btn_save);
         ImageView ivMore = findViewById(R.id.iv_more);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -121,15 +120,6 @@ public class AchievementActivity extends BaseActivity {
             editLauncher.launch(intent);
         });
 
-        // 保存
-        // TODO: 2026/3/31 添加新物种时，可能会编辑已添加的物种；需要优化
-        btnSave.setOnClickListener(v -> {
-            if (isReadOnly) {
-                return;
-            }
-            viewModel.insertAll(dataList);
-        });
-
         // 删除
         btnDelete.setOnClickListener(v -> {
             if (isReadOnly) {
@@ -152,7 +142,6 @@ public class AchievementActivity extends BaseActivity {
     private void setBtnAlpha(float alpha) {
         btnAdd.setAlpha(alpha);
         btnDelete.setAlpha(alpha);
-        btnSave.setAlpha(alpha);
     }
 
     private void initViewModel() {
