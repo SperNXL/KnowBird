@@ -3,6 +3,7 @@ package com.knowbird.settings.achievement;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -33,6 +34,7 @@ import java.util.List;
  *
  */
 public class AchievementActivity extends BaseActivity {
+    private static final String TAG = "AchievementActivity";
     private static final int REQUEST_ACHIEVE_ITEM_ADD = 1001;
     private static final float UNABLE_CLICK_ALPHA = 0.5f;
     private static final float ABLE_CLICK_ALPHA = 1f;
@@ -58,8 +60,16 @@ public class AchievementActivity extends BaseActivity {
                     String enName = data.getStringExtra("enName");
                     String date = data.getStringExtra("date");
                     String urisStr = data.getStringExtra("uris");
-                    dataList.add(new AchieveBean((adapter.getItemCount() + 1), cnName, enName, 5, date, urisStr));
-                    viewModel.insertAll(dataList);
+                    int id = data.getIntExtra("id", -1);
+                    Log.d(TAG, "id: " + id);
+                    if (id != -1) {
+                        AchieveBean achieveBean = new AchieveBean(id, cnName, enName, 5, date, urisStr);
+                        viewModel.updateAchieveBeans(achieveBean);
+                    } else {
+                        AchieveBean achieveBean = new AchieveBean(cnName, enName, 5, date, urisStr);
+                        dataList.add(achieveBean);
+                        viewModel.insert(achieveBean);
+                    }
                     adapter.notifyDataSetChanged();
                 }
             });
@@ -75,8 +85,8 @@ public class AchievementActivity extends BaseActivity {
         setContentView(R.layout.activity_achievement);
         mContext = getApplicationContext();
 
-        initView();
         initViewModel();
+        initView();
     }
 
     private void initView() {
@@ -92,7 +102,6 @@ public class AchievementActivity extends BaseActivity {
         ImageView ivMore = findViewById(R.id.iv_more);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new AchieveAdapter(dataList);
         recyclerView.setAdapter(adapter);
 
         adapter.setReadOnly(isReadOnly);
@@ -146,11 +155,10 @@ public class AchievementActivity extends BaseActivity {
 
     private void initViewModel() {
         viewModel = new ViewModelProvider(this).get(AchieveViewModel.class);
+        adapter = new AchieveAdapter(dataList, viewModel, editLauncher);
         viewModel.getAllAchieveBeans().observe(this, achieveBeans -> {
-            if (dataList == null || dataList.isEmpty())
-                adapter.submitList(achieveBeans);
-            else
-                adapter.submitList(dataList);
+            dataList = new ArrayList<>(achieveBeans);
+            adapter.submitList(dataList);
             updateSummary();
         });
     }

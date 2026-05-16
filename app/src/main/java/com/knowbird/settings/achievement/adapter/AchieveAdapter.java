@@ -4,7 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,11 +14,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.knowbird.R;
+import com.knowbird.data.viewmodel.AchieveViewModel;
+import com.knowbird.settings.achievement.EditActivity;
 import com.knowbird.settings.achievement.WikiActivity;
 import com.knowbird.settings.achievement.bean.AchieveBean;
 import com.knowbird.utils.StringUtils;
@@ -31,16 +34,24 @@ import java.util.List;
  *
  */
 public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHolder> {
+    private static final String TAG = "AchieveAdapter";
 
     private List<AchieveBean> dataList;
+
+    private AchieveViewModel viewModel;
 
     // 用于保存选中状态
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
 
+    private ActivityResultLauncher<Intent> editLauncher;
+
     private boolean isReadOnly;
 
-    public AchieveAdapter(List<AchieveBean> dataList) {
+    public AchieveAdapter(List<AchieveBean> dataList, AchieveViewModel viewModel,
+                          ActivityResultLauncher<Intent> editLauncher) {
         this.dataList = dataList;
+        this.viewModel = viewModel;
+        this.editLauncher = editLauncher;
     }
 
     /**
@@ -90,25 +101,27 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         if (isReadOnly) {
             holder.checkBox.setVisibility(View.GONE);
 
-            holder.itemView.setOnClickListener(v -> {
-                Context context = v.getContext();
-                Bundle bundle = new Bundle();
-                bundle.putInt("m_id", bean.getId());
-                bundle.putString("m_name", bean.getCnName());
-                bundle.putString("m_en_name", bean.getEnName());
-                Intent wikiIntent = new Intent(context, WikiActivity.class);
-                wikiIntent.putExtras(bundle);
-                context.startActivity(wikiIntent);
-            });
+            holder.itemView.setOnClickListener(v ->
+                startTargetActivity(WikiActivity.class,
+                        bean, v.getContext(), "wiki")
+            );
         } else {
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.checkBox.setChecked(selectedItems.get(position, false));
 
-            // TODO: 2026/3/31 弹出编辑框
-            holder.itemView.setOnClickListener(v -> {
-                showEditDialog(v.getContext(), bean, position);
-            });
+            holder.itemView.setOnClickListener(v ->
+                startTargetActivity(EditActivity.class,
+                        bean, v.getContext(), "edit")
+            );
         }
+    }
+
+    private void startTargetActivity(Class clazz, AchieveBean bean, Context context, String clickType) {
+        if (viewModel == null) {
+            Log.e(TAG, "viewModel is null");
+        }
+        Log.d(TAG, "startTargetActivity: id:" + bean.getId());
+        viewModel.getAchieveBeanByIdInAch(bean.getId(), clazz, clickType, editLauncher);
     }
 
     public void submitList(List<AchieveBean> newList) {

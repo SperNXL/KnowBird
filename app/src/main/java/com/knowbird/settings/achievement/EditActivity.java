@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.knowbird.BaseActivity;
 import com.knowbird.R;
 import com.knowbird.settings.achievement.adapter.ImageAdapter;
-import com.knowbird.utils.ToastUtils;
+import com.knowbird.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +24,9 @@ public class EditActivity extends BaseActivity {
 
     private RecyclerView rvImages;
     private ImageAdapter adapter;
+    private EditText etName;
+    private EditText etEnName;
+    private EditText etDate;
     private List<String> imageList = new ArrayList<>();
     private static final int MAX_IMAGES = 5;
     private static final int DEFAULT_ID = 0;
@@ -54,16 +57,51 @@ public class EditActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+        initView();
+        setupClickListener();
+        initData(getIntent());
+    }
 
+    private void initView() {
         // 设置横向 LinearLayoutManager
         rvImages = findViewById(R.id.rv_images);
+        etName = findViewById(R.id.et_name);
+        etEnName = findViewById(R.id.et_en_name);
+        etDate = findViewById(R.id.et_date);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL); // 横向滑动
         rvImages.setLayoutManager(linearLayoutManager);
 
         adapter = new ImageAdapter(imageList);
         rvImages.setAdapter(adapter);
+    }
 
+    private void initData(Intent intent) {
+        if (!"edit".equals(intent.getStringExtra("m_click_type"))) {
+            return;
+        }
+        String cnName = intent.getStringExtra("m_name");
+        String enName = intent.getStringExtra("m_en_name");
+        String date = intent.getStringExtra("m_date");
+        String urisStr = intent.getStringExtra("m_uris");
+
+        List<String> uriList = StringUtils.string2List(urisStr);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            if (!uriList.getFirst().isEmpty() && !uriList.equals(imageList)) {
+                imageList.addAll(uriList);
+            }
+        } else {
+            if (uriList.size() > 0 && !uriList.get(0).isEmpty() && !uriList.equals(imageList)) {
+                imageList.addAll(uriList);
+            }
+        }
+        etName.setText(cnName);
+        etEnName.setText(enName);
+        etDate.setText(date);
+        adapter.notifyDataSetChanged();
+    }
+
+    private void setupClickListener() {
         // 添加按钮点击
         adapter.setOnAddClickListener(() -> pickImage.launch("image/*"));
 
@@ -81,20 +119,20 @@ public class EditActivity extends BaseActivity {
 
         // 保存按钮
         findViewById(R.id.ll_save).setOnClickListener(v -> {
-            EditText etName = findViewById(R.id.et_name);
-            EditText etEnName = findViewById(R.id.et_en_name);
-            EditText etDate = findViewById(R.id.et_date);
             String name = etName.getText().toString();
             String enName = etEnName.getText().toString();
             String date = etDate.getText().toString();
             String imageListString = imageList.toString();
             Intent result = getIntent();
+            int mId = result.getIntExtra("m_id", 0);
+            if (mId != 0) {
+                result.putExtra("id", mId);
+            }
             result.putExtra("cnName", name);
             result.putExtra("enName", enName);
             result.putExtra("date", date);
             result.putExtra("uris", imageListString);
             setResult(RESULT_OK, result);
-            ToastUtils.showShort("添加成功");
             finish();
         });
     }

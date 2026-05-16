@@ -33,6 +33,9 @@ public interface AchieveDao {
     @Query("SELECT * FROM achieve_bean WHERE enName LIKE :enName")
     List<AchieveBean> getAchievesByEnName(String enName);
 
+    @Query("SELECT * FROM achieve_bean WHERE id = :id")
+    AchieveBean getAchieveBeanById(int id);
+
     @Update
     void updateAchieveBeans(List<AchieveBean> achieveBeans);
 

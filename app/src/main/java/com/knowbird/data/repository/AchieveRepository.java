@@ -43,6 +43,17 @@ public class AchieveRepository {
         return INSTANCE;
     }
 
+    public void getAchiveBeanByid(int id, OnDataLoadListener listener) {
+        executor.execute(() -> {
+            try {
+                AchieveBean achieveBean = achieveDao.getAchieveBeanById(id);
+                listener.onDataLoad(achieveBean);
+            } catch (Exception e) {
+                listener.onError(e);
+            }
+        });
+    }
+
     public LiveData<List<AchieveBean>> getAllAchieves() {
         return allAchieves;
     }
@@ -51,7 +62,7 @@ public class AchieveRepository {
         executor.execute(() -> {
             try {
                 List<AchieveBean> allAchieveBeansAsync = achieveDao.getAllAchieveBeansAsync();
-                listener.onDataLoad(allAchieveBeansAsync);
+                listener.onDataLoad(allAchieveBeansAsync.toArray(new AchieveBean[0]));
             } catch (Exception e) {
                 listener.onError(e);
             }
@@ -62,6 +73,17 @@ public class AchieveRepository {
         executor.execute(() -> {
             try {
                 achieveDao.insertAll(achieveBeans);
+                listener.onSuccess(Constants.SUCCESS_CODE);
+            } catch (Exception e) {
+                listener.onError(e);
+            }
+        });
+    }
+
+    public void insert(AchieveBean achieveBean, OnOperationListener listener) {
+        executor.execute(() -> {
+            try {
+                achieveDao.insert(achieveBean);
                 listener.onSuccess(Constants.SUCCESS_CODE);
             } catch (Exception e) {
                 listener.onError(e);
@@ -80,8 +102,19 @@ public class AchieveRepository {
         });
     }
 
+    public void updateAchieve(AchieveBean bean, OnOperationListener listener) {
+        executor.execute(() -> {
+            try {
+                achieveDao.update(bean);
+                listener.onSuccess(Constants.SUCCESS_CODE);
+            } catch (Exception e) {
+                listener.onError(e);
+            }
+        });
+    }
+
     public interface OnDataLoadListener {
-        void onDataLoad(List<AchieveBean> achieveBeans);
+        void onDataLoad(AchieveBean... achieveBeans);
         void onError(Exception e);
     }
 

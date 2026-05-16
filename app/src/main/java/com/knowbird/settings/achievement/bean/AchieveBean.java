@@ -13,7 +13,7 @@ import androidx.room.PrimaryKey;
 @Entity(tableName = "achieve_bean")
 public class AchieveBean {
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    private int id = 0;
 
     // 中文名称
     @ColumnInfo(name = "cnName")
