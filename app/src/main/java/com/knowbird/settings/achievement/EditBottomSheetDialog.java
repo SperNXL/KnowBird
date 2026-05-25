@@ -118,6 +118,7 @@ public class EditBottomSheetDialog extends BottomSheetDialogFragment {
         rvImages.setAdapter(adapter);
     }
 
+    // sk-O7nQGzxcLRNm1ptGCXWU9ii1d8BTZyzKsWx8YQeWeGtw1sZQ
     private void initData() {
         List<String> uriList = StringUtils.string2List(urisStr);
         if (uriList.size() > 0 && !uriList.get(0).isEmpty() && !uriList.equals(imageList)) {

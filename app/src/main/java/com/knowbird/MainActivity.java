@@ -1,189 +1,164 @@
 package com.knowbird;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
-import com.knowbird.adapter.BirdAdapter;
-import com.knowbird.settings.SettingsActivity;
-import com.knowbird.utils.KeyBoardUtils;
+import com.knowbird.fragment.GuideFragment;
+import com.knowbird.fragment.RecognizeFragment;
+import com.knowbird.settings.SettingsFragment;
+import com.knowbird.settings.achievement.AchievementFragment;
 
-import java.util.ArrayList;
-import java.util.List;
+public class MainActivity extends AppCompatActivity implements SettingsFragment.OnSettingsItemClickListener {
 
-public class MainActivity extends BaseActivity {
+    private LinearLayout navRecognize, navList, navGuide, navSettings;
+    private ImageView ivRecognize, ivList, ivGuide, ivSettingsNav;
+    private TextView tvRecognize, tvList, tvGuide, tvSettings;
 
-    private View llAlbum, llListenBird, llCamera;
-    private RecyclerView recyclerView;
-    private TextView btnAll, btnImage, btnAudio, btnUnknown, tvEmptyHint;
-    private BirdAdapter allAdapter, imageAdapter, audioAdapter, unknowAdapter;
-    private List<BirdAdapter.BirdItem> allData, imageData, audioData, unknownData;
-
-    private ImageView btnSetting;
-
-    private Context mContext;
-
-    @Override
-    protected View getRootView() {
-        return getWindow().getDecorView().getRootView();
-    }
+    private FragmentManager fragmentManager;
+    private Fragment currentFragment;
+    private RecognizeFragment recognizeFragment;
+    private AchievementFragment achievementFragment;
+    private GuideFragment guideFragment;
+    private SettingsFragment settingsFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        mContext = getApplicationContext();
         setContentView(R.layout.activity_main);
+
+        fragmentManager = getSupportFragmentManager();
+
         initView();
-
-        // 模拟数据
-        BirdAdapter.BirdItem birdItem = new BirdAdapter.BirdItem(R.drawable.bird_sample, "红腰穗鹛",
-                "Stachyris muculata", "2026-2-16 23:10");
-
-        allData = new ArrayList<>();
-        allData.add(birdItem);
-        allData.add(birdItem);
-        allData.add(birdItem);
-
-        imageData = new ArrayList<>();
-        imageData.add(birdItem);
-        imageData.add(birdItem);
-
-        audioData = new ArrayList<>();
-        audioData.add(birdItem);
-        audioData.add(birdItem);
-        audioData.add(birdItem);
-        audioData.add(birdItem);
-        audioData.add(birdItem);
-        audioData.add(birdItem);
-        audioData.add(birdItem);
-
-        unknownData = new ArrayList<>();
-
-        // 设置列表
-        initAdapter(this);
-        recyclerView.setAdapter(allAdapter);
-        checkDataAndUpdateView(allData);
-
-        btnSetting.setOnClickListener( v-> {
-            Intent settingIntent = new Intent(this, SettingsActivity.class);
-            startActivity(settingIntent);
-        });
-
-        btnAll.setOnClickListener(v -> {
-            recyclerView.setAdapter(allAdapter);
-            updateFilterSelection(btnAll);
-            allAdapter.setDataList(allData);
-            checkDataAndUpdateView(allData);
-        });
-
-        btnImage.setOnClickListener(v -> {
-            recyclerView.setAdapter(imageAdapter);
-            updateFilterSelection(btnImage);
-            imageAdapter.setDataList(imageData);
-            checkDataAndUpdateView(imageData);
-        });
-
-        btnAudio.setOnClickListener(v -> {
-            recyclerView.setAdapter(audioAdapter);
-            updateFilterSelection(btnAudio);
-            audioAdapter.setDataList(audioData);
-            checkDataAndUpdateView(audioData);
-        });
-
-        btnUnknown.setOnClickListener(v -> {
-            recyclerView.setAdapter(unknowAdapter);
-            updateFilterSelection(btnUnknown);
-            unknowAdapter.setDataList(unknownData);
-            checkDataAndUpdateView(unknownData);
-        });
-
-        llAlbum.setOnClickListener(v -> showToast("打开相册"));
-        llListenBird.setOnClickListener(v -> showToast("开始听鸟识别"));
-        llCamera.setOnClickListener(v -> showToast("打开相机"));
-    }
-
-    private void initAdapter(Context context) {
-        allAdapter = new BirdAdapter(context, allData);
-        imageAdapter = new BirdAdapter(context, imageData);
-        audioAdapter = new BirdAdapter(context, audioData);
-        unknowAdapter = new BirdAdapter(context, unknownData);
+        initFragments();
+        showFragment(0);
+        updateNavigationSelection(0);
     }
 
     private void initView() {
-        btnSetting = findViewById(R.id.iv_settings);
+        navRecognize = findViewById(R.id.nav_recognize);
+        navList = findViewById(R.id.nav_list);
+        navGuide = findViewById(R.id.nav_guide);
+        navSettings = findViewById(R.id.nav_settings);
+        ivRecognize = findViewById(R.id.iv_recognize);
+        ivList = findViewById(R.id.iv_list);
+        ivGuide = findViewById(R.id.iv_guide);
+        ivSettingsNav = findViewById(R.id.iv_settings_nav);
+        tvRecognize = findViewById(R.id.tv_recognize);
+        tvList = findViewById(R.id.tv_list);
+        tvGuide = findViewById(R.id.tv_guide);
+        tvSettings = findViewById(R.id.tv_settings);
 
-        btnAll = findViewById(R.id.btn_all);
-        btnImage = findViewById(R.id.btn_image);
-        btnAudio = findViewById(R.id.btn_audio);
-        btnUnknown = findViewById(R.id.btn_unknown);
-        recyclerView = findViewById(R.id.recyclerView);
-        tvEmptyHint = findViewById(R.id.tv_empty_hint);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        navRecognize.setOnClickListener(v -> {
+            showFragment(0);
+            updateNavigationSelection(0);
+        });
 
-        llAlbum = findViewById(R.id.ll_album);
-        llListenBird = findViewById(R.id.ll_listen_bird);
-        llCamera = findViewById(R.id.ll_camera);
+        navList.setOnClickListener(v -> {
+            showFragment(1);
+            updateNavigationSelection(1);
+        });
+
+        navGuide.setOnClickListener(v -> {
+            showFragment(2);
+            updateNavigationSelection(2);
+        });
+
+        navSettings.setOnClickListener(v -> {
+            showFragment(3);
+            updateNavigationSelection(3);
+        });
     }
 
-    // 更新按钮选中状态
-    private void updateFilterSelection(TextView selectedBtn) {
-        resetAllButtons();
+    private void initFragments() {
+        recognizeFragment = new RecognizeFragment();
+        achievementFragment = new AchievementFragment();
+        guideFragment = new GuideFragment();
+        settingsFragment = new SettingsFragment();
+        settingsFragment.setOnSettingsItemClickListener(this);
 
-        // 设置选中按钮样式
-        selectedBtn.setBackgroundResource(R.drawable.bg_filter_selected);
-        selectedBtn.setTextColor(getResources().getColor(R.color.selected_color));
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_container, recognizeFragment, "recognize")
+                .add(R.id.fragment_container, achievementFragment, "achievement")
+                .hide(achievementFragment)
+                .add(R.id.fragment_container, guideFragment, "guide")
+                .hide(guideFragment)
+                .add(R.id.fragment_container, settingsFragment, "settings")
+                .hide(settingsFragment)
+                .commit();
     }
 
-    private void checkDataAndUpdateView(List<BirdAdapter.BirdItem> data) {
-        if (data == null || data.isEmpty()) {
-            // 数据为空：显示提示文字，隐藏列表
-            recyclerView.setVisibility(View.GONE);
-            tvEmptyHint.setVisibility(View.VISIBLE);
-        } else {
-            // 数据不为空：显示列表，隐藏提示文字
-            recyclerView.setVisibility(View.VISIBLE);
-            tvEmptyHint.setVisibility(View.GONE);
+    private void showFragment(int index) {
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+
+        if (currentFragment != null) {
+            transaction.hide(currentFragment);
+        }
+
+        switch (index) {
+            case 0:
+                currentFragment = recognizeFragment;
+                break;
+            case 1:
+                currentFragment = achievementFragment;
+                break;
+            case 2:
+                currentFragment = guideFragment;
+                break;
+            case 3:
+                currentFragment = settingsFragment;
+                break;
+        }
+
+        if (currentFragment != null) {
+            transaction.show(currentFragment);
+        }
+
+        transaction.commit();
+    }
+
+    private void updateNavigationSelection(int selectedIndex) {
+        ivRecognize.setImageResource(R.drawable.ic_nav_recognize);
+        tvRecognize.setTextColor(getResources().getColor(R.color.grey));
+        ivList.setImageResource(R.drawable.ic_nav_list);
+        tvList.setTextColor(getResources().getColor(R.color.grey));
+        ivGuide.setImageResource(R.drawable.ic_nav_guide);
+        tvGuide.setTextColor(getResources().getColor(R.color.grey));
+        ivSettingsNav.setImageResource(R.drawable.ic_nav_settings);
+        tvSettings.setTextColor(getResources().getColor(R.color.grey));
+
+        switch (selectedIndex) {
+            case 0:
+                ivRecognize.setImageResource(R.drawable.ic_nav_recognize_selected);
+                tvRecognize.setTextColor(getResources().getColor(R.color.colorPrimary));
+                break;
+            case 1:
+                ivList.setImageResource(R.drawable.ic_nav_list_selected);
+                tvList.setTextColor(getResources().getColor(R.color.colorPrimary));
+                break;
+            case 2:
+                ivGuide.setImageResource(R.drawable.ic_nav_guide_selected);
+                tvGuide.setTextColor(getResources().getColor(R.color.colorPrimary));
+                break;
+            case 3:
+                ivSettingsNav.setImageResource(R.drawable.ic_nav_settings_selected);
+                tvSettings.setTextColor(getResources().getColor(R.color.colorPrimary));
+                break;
         }
     }
 
-    // 重置所有按钮为未选中状态
-    private void resetAllButtons() {
-        btnAll.setBackgroundResource(R.drawable.bg_filter_unselected);
-        btnAll.setTextColor(getResources().getColor(R.color.unselected_color));
-        btnImage.setBackgroundResource(R.drawable.bg_filter_unselected);
-        btnImage.setTextColor(getResources().getColor(R.color.unselected_color));
-        btnAudio.setBackgroundResource(R.drawable.bg_filter_unselected);
-        btnAudio.setTextColor(getResources().getColor(R.color.unselected_color));
-        btnUnknown.setBackgroundResource(R.drawable.bg_filter_unselected);
-        btnUnknown.setTextColor(getResources().getColor(R.color.unselected_color));
-    }
-
-    // 重写触摸事件分发方法
     @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        // 只处理手指按下的动作
-        if (ev.getAction() == MotionEvent.ACTION_DOWN) {
-            // 获取当前点击的视图
-            View currentFocus = getCurrentFocus();
-            if (currentFocus != null && KeyBoardUtils.isShouldHideKeyboard(mContext, currentFocus, ev)) {
-                KeyBoardUtils.hideSoftKeyboard(mContext, currentFocus);
-                currentFocus.clearFocus();
-            }
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    private void showToast(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void onAchievementClicked() {
+        showFragment(1);
+        updateNavigationSelection(1);
     }
 }
