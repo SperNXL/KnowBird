@@ -1,10 +1,7 @@
 package com.knowbird.settings.achievement.adapter;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,16 +9,13 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.knowbird.R;
 import com.knowbird.data.viewmodel.AchieveViewModel;
-import com.knowbird.settings.achievement.EditActivity;
 import com.knowbird.settings.achievement.WikiActivity;
 import com.knowbird.settings.achievement.bean.AchieveBean;
 import com.knowbird.utils.StringUtils;
@@ -34,24 +28,29 @@ import java.util.List;
  *
  */
 public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHolder> {
-    private static final String TAG = "AchieveAdapter";
 
     private List<AchieveBean> dataList;
-
     private AchieveViewModel viewModel;
 
     // 用于保存选中状态
     private SparseBooleanArray selectedItems = new SparseBooleanArray();
 
-    private ActivityResultLauncher<Intent> editLauncher;
+    // 编辑回调接口
+    public interface OnEditListener {
+        void onEdit(AchieveBean bean);
+    }
+
+    private OnEditListener editListener;
 
     private boolean isReadOnly;
 
-    public AchieveAdapter(List<AchieveBean> dataList, AchieveViewModel viewModel,
-                          ActivityResultLauncher<Intent> editLauncher) {
+    public AchieveAdapter(List<AchieveBean> dataList, AchieveViewModel viewModel) {
         this.dataList = dataList;
         this.viewModel = viewModel;
-        this.editLauncher = editLauncher;
+    }
+
+    public void setOnEditListener(OnEditListener listener) {
+        this.editListener = listener;
     }
 
     /**
@@ -83,7 +82,11 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
             holder.tvImageView.setImageResource(R.drawable.ic_image_error);
         } else {
             List<String> uris = StringUtils.string2List(bean.getUris());
-            holder.tvImageView.setImageURI(Uri.parse(uris.get(0)));
+            if (!uris.isEmpty() && !uris.get(0).isEmpty()) {
+                holder.tvImageView.setImageURI(Uri.parse(uris.get(0)));
+            } else {
+                holder.tvImageView.setImageResource(R.drawable.ic_image_error);
+            }
         }
 
         // 点击 CheckBox 改变选中状态
@@ -97,31 +100,30 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         });
 
         // 只读模式下 CheckBox 隐藏且不可点击；点击item进入wiki
-        // 非只读模式下 显示 CheckBox 并绑定选中状态；点击item进入编辑
+        // 非只读模式下 显示 CheckBox 并绑定选中状态；点击item进入编辑弹窗
         if (isReadOnly) {
             holder.checkBox.setVisibility(View.GONE);
 
             holder.itemView.setOnClickListener(v ->
-                startTargetActivity(WikiActivity.class,
-                        bean, v.getContext(), "wiki")
+                startTargetActivity(WikiActivity.class, bean, v.getContext())
             );
         } else {
             holder.checkBox.setVisibility(View.VISIBLE);
             holder.checkBox.setChecked(selectedItems.get(position, false));
 
-            holder.itemView.setOnClickListener(v ->
-                startTargetActivity(EditActivity.class,
-                        bean, v.getContext(), "edit")
-            );
+            holder.itemView.setOnClickListener(v -> {
+                if (editListener != null) {
+                    editListener.onEdit(bean);
+                }
+            });
         }
     }
 
-    private void startTargetActivity(Class clazz, AchieveBean bean, Context context, String clickType) {
+    private void startTargetActivity(Class clazz, AchieveBean bean, Context context) {
         if (viewModel == null) {
-            Log.e(TAG, "viewModel is null");
+            return;
         }
-        Log.d(TAG, "startTargetActivity: id:" + bean.getId());
-        viewModel.getAchieveBeanByIdInAch(bean.getId(), clazz, clickType, editLauncher);
+        viewModel.startTargetActivity(clazz, bean);
     }
 
     public void submitList(List<AchieveBean> newList) {
@@ -162,18 +164,6 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
     @Override
     public int getItemCount() {
         return dataList == null ? 0 : dataList.size();
-    }
-
-    // TODO: 2026/3/10 弹出编辑弹窗，与添加弹窗是一个弹窗
-    private void showEditDialog(Context context, AchieveBean bean, int position) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("编辑成就");
-        builder.setMessage("正在编辑 " + bean.getCnName());
-        builder.setPositiveButton("保存", (dialog, which) -> {
-            // 这里可以修改 bean 的数据
-            Toast.makeText(context, "已保存", Toast.LENGTH_SHORT).show();
-        });
-        builder.show();
     }
 
     static class ViewHolder extends RecyclerView.ViewHolder {

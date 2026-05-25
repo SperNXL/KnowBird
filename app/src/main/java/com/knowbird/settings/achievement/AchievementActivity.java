@@ -1,7 +1,6 @@
 package com.knowbird.settings.achievement;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -12,8 +11,6 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -35,7 +32,6 @@ import java.util.List;
  */
 public class AchievementActivity extends BaseActivity {
     private static final String TAG = "AchievementActivity";
-    private static final int REQUEST_ACHIEVE_ITEM_ADD = 1001;
     private static final float UNABLE_CLICK_ALPHA = 0.5f;
     private static final float ABLE_CLICK_ALPHA = 1f;
     private RecyclerView recyclerView;
@@ -49,30 +45,6 @@ public class AchievementActivity extends BaseActivity {
     private Context mContext;
 
     private AchieveViewModel viewModel;
-
-    private final ActivityResultLauncher<Intent> editLauncher =
-            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),
-                    result -> {
-                if (result != null && result.getResultCode() == RESULT_OK
-                        && result.getData() != null) {
-                    Intent data = result.getData();
-                    String cnName = data.getStringExtra("cnName");
-                    String enName = data.getStringExtra("enName");
-                    String date = data.getStringExtra("date");
-                    String urisStr = data.getStringExtra("uris");
-                    int id = data.getIntExtra("id", -1);
-                    Log.d(TAG, "id: " + id);
-                    if (id != -1) {
-                        AchieveBean achieveBean = new AchieveBean(id, cnName, enName, 5, date, urisStr);
-                        viewModel.updateAchieveBeans(achieveBean);
-                    } else {
-                        AchieveBean achieveBean = new AchieveBean(cnName, enName, 5, date, urisStr);
-                        dataList.add(achieveBean);
-                        viewModel.insert(achieveBean);
-                    }
-                    adapter.notifyDataSetChanged();
-                }
-            });
 
     @Override
     protected View getRootView() {
@@ -119,14 +91,13 @@ public class AchievementActivity extends BaseActivity {
             adapter.clearSelection();
         });
 
-        // 添加
+        // 添加 - 显示底部弹窗
         btnAdd.setOnClickListener(v -> {
             if (isReadOnly) {
-                ToastUtils.showShort("关闭已读模式添加物种");
+                ToastUtils.showShort("关闭只读模式添加物种");
                 return;
             }
-            Intent intent = new Intent(this, EditActivity.class);
-            editLauncher.launch(intent);
+            showEditBottomSheet();
         });
 
         // 删除
@@ -148,6 +119,48 @@ public class AchievementActivity extends BaseActivity {
         updateSummary();
     }
 
+    /**
+     * 显示编辑底部弹窗（新增模式）
+     */
+    private void showEditBottomSheet() {
+        showEditBottomSheet("", "", "", "", 0);
+    }
+
+    /**
+     * 显示编辑底部弹窗
+     */
+    private void showEditBottomSheet(AchieveBean bean) {
+        showEditBottomSheet(
+                bean.getCnName(),
+                bean.getEnName(),
+                bean.getDate(),
+                bean.getUris(),
+                bean.getId()
+        );
+    }
+
+    /**
+     * 显示编辑底部弹窗（通用）
+     */
+    private void showEditBottomSheet(String cnName, String enName, String date, String uris, int id) {
+        EditBottomSheetDialog bottomSheet = EditBottomSheetDialog.newInstance(cnName, enName, date, uris, id);
+        bottomSheet.setOnSaveListener((saveCnName, saveEnName, saveDate, saveUris, saveId) -> {
+            Log.d(TAG, "id: " + saveId);
+            if (saveId != 0) {
+                // 更新
+                AchieveBean achieveBean = new AchieveBean(saveId, saveCnName, saveEnName, 5, saveDate, saveUris);
+                viewModel.updateAchieveBeans(achieveBean);
+            } else {
+                // 新增
+                AchieveBean achieveBean = new AchieveBean(saveCnName, saveEnName, 5, saveDate, saveUris);
+                dataList.add(achieveBean);
+                viewModel.insert(achieveBean);
+            }
+            adapter.notifyDataSetChanged();
+        });
+        bottomSheet.show(getSupportFragmentManager(), "EditBottomSheet");
+    }
+
     private void setBtnAlpha(float alpha) {
         btnAdd.setAlpha(alpha);
         btnDelete.setAlpha(alpha);
@@ -155,7 +168,8 @@ public class AchievementActivity extends BaseActivity {
 
     private void initViewModel() {
         viewModel = new ViewModelProvider(this).get(AchieveViewModel.class);
-        adapter = new AchieveAdapter(dataList, viewModel, editLauncher);
+        adapter = new AchieveAdapter(dataList, viewModel);
+        adapter.setOnEditListener(this::showEditBottomSheet);
         viewModel.getAllAchieveBeans().observe(this, achieveBeans -> {
             dataList = new ArrayList<>(achieveBeans);
             adapter.submitList(dataList);

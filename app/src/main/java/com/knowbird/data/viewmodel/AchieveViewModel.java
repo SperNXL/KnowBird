@@ -125,4 +125,24 @@ public class AchieveViewModel extends AndroidViewModel {
             }
         });
     }
+
+    /**
+     * 启动目标 Activity（用于 WikiActivity 等）
+     */
+    public void startTargetActivity(Class clazz, AchieveBean bean) {
+        if (mContext == null) {
+            return;
+        }
+        Intent intent = new Intent(mContext, clazz);
+        Bundle bundle = new Bundle();
+        bundle.putInt("m_id", bean.getId());
+        bundle.putString("m_name", bean.getCnName());
+        bundle.putString("m_en_name", bean.getEnName());
+        bundle.putString("m_uris", bean.getUris());
+        bundle.putString("m_date", bean.getDate());
+        bundle.putString("m_click_type", "wiki");
+        intent.putExtras(bundle);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        mContext.startActivity(intent);
+    }
 }

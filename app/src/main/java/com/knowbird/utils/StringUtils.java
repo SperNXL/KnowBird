@@ -2,6 +2,7 @@ package com.knowbird.utils;
 
 import android.util.Log;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -19,6 +20,9 @@ public class StringUtils {
     public static List<String> string2List(String str) {
         if (str == null) {
             Log.e(TAG, "str is null");
+        }
+        if ("".equals(str)) {
+            return new ArrayList<>();
         }
         String substring = str.substring(1, str.length() - 1);
         String[] split = substring.split(", ");
