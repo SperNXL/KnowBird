@@ -5,6 +5,9 @@ package com.knowbird.settings;
  *
  */
 public enum SettingsType {
+    // 用户信息项
+    TYPE_USER_INFO,
+
     // 分组标题（通用、其他）
     TYPE_TITLE,
 

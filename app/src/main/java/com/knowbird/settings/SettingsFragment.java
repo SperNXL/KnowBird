@@ -16,6 +16,7 @@ import com.knowbird.settings.inter.ISettingsItem;
 import com.knowbird.settings.item.ClickItem;
 import com.knowbird.settings.item.SwitchItem;
 import com.knowbird.settings.item.TitleItem;
+import com.knowbird.settings.item.UserInfoItem;
 import com.knowbird.settings.item.VersionItem;
 
 import java.util.ArrayList;
@@ -47,6 +48,8 @@ public class SettingsFragment extends BaseFragment implements SettingsAdapter.On
 
     private List<ISettingsItem> getSettingsData() {
         List<ISettingsItem> list = new ArrayList<>();
+
+        list.add(new UserInfoItem("user_info", "用户名", "ID: 12345678"));
 
         list.add(new ClickItem("achievement", "成就清单", null));
         list.add(new ClickItem("offline", "离线数据包", null));

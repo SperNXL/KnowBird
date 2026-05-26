@@ -16,6 +16,7 @@ import com.knowbird.settings.inter.ISettingsItem;
 import com.knowbird.settings.item.ClickItem;
 import com.knowbird.settings.item.SwitchItem;
 import com.knowbird.settings.item.TitleItem;
+import com.knowbird.settings.item.UserInfoItem;
 import com.knowbird.settings.item.VersionItem;
 
 import java.util.List;
@@ -49,6 +50,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         switch (SettingsType.values()[viewType]) {
+            case TYPE_USER_INFO:
+                return new UserInfoHolder(inflater.inflate(R.layout.item_settings_user_info, parent, false));
             case TYPE_TITLE:
                 return new TitleHolder(inflater.inflate(R.layout.item_settings_title, parent, false));
             case TYPE_SWITCH:
@@ -65,6 +68,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         ISettingsItem item = mDataList.get(position);
         switch (item.getType()) {
+            case TYPE_USER_INFO:
+                ((UserInfoHolder) holder).bind((UserInfoItem) item);
+                break;
             case TYPE_TITLE:
                 ((TitleHolder) holder).bind((TitleItem) item);
                 break;
@@ -86,6 +92,23 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     // ===================== ViewHolder 定义 =====================
+
+    // 用户信息 Holder
+    static class UserInfoHolder extends RecyclerView.ViewHolder {
+        TextView tvNickname;
+        TextView tvUid;
+
+        public UserInfoHolder(@NonNull View itemView) {
+            super(itemView);
+            tvNickname = itemView.findViewById(R.id.tv_nickname);
+            tvUid = itemView.findViewById(R.id.tv_uid);
+        }
+
+        public void bind(UserInfoItem item) {
+            tvNickname.setText(item.getNickname());
+            tvUid.setText(item.getUid());
+        }
+    }
 
     // 标题 Holder
     static class TitleHolder extends RecyclerView.ViewHolder {
