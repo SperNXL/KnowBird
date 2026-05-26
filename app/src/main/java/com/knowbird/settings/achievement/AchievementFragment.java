@@ -84,9 +84,8 @@ public class AchievementFragment extends BaseFragment {
             }
             List<AchieveBean> selectedList = adapter.getSelectedList();
             viewModel.deleteAchieveBeans(selectedList);
-            dataList.removeAll(selectedList);
             adapter.clearSelection();
-            adapter.submitList(dataList);
+            // 不手动操作 dataList，依赖 LiveData 回调自动更新
         });
 
         updateSummary();
@@ -115,10 +114,9 @@ public class AchievementFragment extends BaseFragment {
                 viewModel.updateAchieveBeans(achieveBean);
             } else {
                 AchieveBean achieveBean = new AchieveBean(saveCnName, saveEnName, 5, saveDate, saveUris);
-                dataList.add(achieveBean);
                 viewModel.insert(achieveBean);
             }
-            adapter.notifyDataSetChanged();
+            // 不手动操作 dataList，依赖 LiveData 回调自动更新
         });
         if (getParentFragmentManager() != null) {
             bottomSheet.show(getParentFragmentManager(), "EditBottomSheet");
@@ -134,10 +132,10 @@ public class AchievementFragment extends BaseFragment {
         if (getActivity() != null) {
             viewModel = new ViewModelProvider(getActivity()).get(AchieveViewModel.class);
         }
-        adapter = new AchieveAdapter(dataList, viewModel);
+        adapter = new AchieveAdapter(new ArrayList<>(), viewModel);
         adapter.setOnEditListener(this::showEditBottomSheet);
-        if (viewModel != null && getActivity() != null) {
-            viewModel.getAllAchieveBeans().observe(getActivity(), achieveBeans -> {
+        if (viewModel != null) {
+            viewModel.getAllAchieveBeans().observe(getViewLifecycleOwner(), achieveBeans -> {
                 if (achieveBeans != null) {
                     dataList = new ArrayList<>(achieveBeans);
                     adapter.submitList(dataList);

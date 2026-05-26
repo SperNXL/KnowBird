@@ -1,8 +1,6 @@
 package com.knowbird.settings.achievement.adapter;
 
 import android.content.Context;
-import android.net.Uri;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DiffUtil;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.knowbird.R;
 import com.knowbird.data.viewmodel.AchieveViewModel;
 import com.knowbird.settings.achievement.WikiActivity;
@@ -31,9 +30,6 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
 
     private List<AchieveBean> dataList;
     private AchieveViewModel viewModel;
-
-    // 用于保存选中状态
-    private SparseBooleanArray selectedItems = new SparseBooleanArray();
 
     // 编辑回调接口
     public interface OnEditListener {
@@ -78,12 +74,16 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
         holder.tvName.setText(bean.getCnName());
         holder.tvInfo.setText(String.format("%s\n稀有度：%s  %s",
                 bean.getEnName(), bean.getRarity(), bean.getDate()));
-        if (bean.getUris() == null) {
+        if (bean.getUris() == null || bean.getUris().isEmpty()) {
             holder.tvImageView.setImageResource(R.drawable.ic_image_error);
         } else {
             List<String> uris = StringUtils.string2List(bean.getUris());
             if (!uris.isEmpty() && !uris.get(0).isEmpty()) {
-                holder.tvImageView.setImageURI(Uri.parse(uris.get(0)));
+                Glide.with(holder.itemView.getContext())
+                        .load(uris.get(0))
+                        .placeholder(R.drawable.ic_image_error)
+                        .error(R.drawable.ic_image_error)
+                        .into(holder.tvImageView);
             } else {
                 holder.tvImageView.setImageResource(R.drawable.ic_image_error);
             }
@@ -91,12 +91,8 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
 
         // 点击 CheckBox 改变选中状态
         holder.checkBox.setOnClickListener(v -> {
-            if (selectedItems.get(position, false)) {
-                selectedItems.delete(position);
-            } else {
-                selectedItems.put(position, true);
-            }
-            notifyItemChanged(position);
+            bean.setSelected(!bean.isSelected());
+            holder.checkBox.setChecked(bean.isSelected());
         });
 
         // 只读模式下 CheckBox 隐藏且不可点击；点击item进入wiki
@@ -109,7 +105,7 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
             );
         } else {
             holder.checkBox.setVisibility(View.VISIBLE);
-            holder.checkBox.setChecked(selectedItems.get(position, false));
+            holder.checkBox.setChecked(bean.isSelected());
 
             holder.itemView.setOnClickListener(v -> {
                 if (editListener != null) {
@@ -144,10 +140,9 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
      */
     public List<AchieveBean> getSelectedList() {
         List<AchieveBean> selectedList = new ArrayList<>();
-        for (int i = 0; i < selectedItems.size(); i++) {
-            int position = selectedItems.keyAt(i);
-            if (selectedItems.valueAt(i) && position >= 0 && position < dataList.size()) {
-                selectedList.add(dataList.get(position));
+        for (AchieveBean bean : dataList) {
+            if (bean.isSelected()) {
+                selectedList.add(bean);
             }
         }
         return selectedList;
@@ -157,7 +152,9 @@ public class AchieveAdapter extends RecyclerView.Adapter<AchieveAdapter.ViewHold
      * 清除所有选中状态
      */
     public void clearSelection() {
-        selectedItems.clear();
+        for (AchieveBean bean : dataList) {
+            bean.setSelected(false);
+        }
         notifyDataSetChanged();
     }
 

@@ -35,6 +35,10 @@ public class AchieveBean {
     @ColumnInfo(name = "uris")
     private String uris;
 
+    // 选中状态（仅内存使用，不存入数据库）
+    @Ignore
+    private boolean isSelected = false;
+
     public AchieveBean() {
     }
 
@@ -123,5 +127,13 @@ public class AchieveBean {
 
     public void setUris(String uris) {
         this.uris = uris;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
