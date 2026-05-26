@@ -11,6 +11,7 @@ import com.knowbird.BaseFragment;
 import com.knowbird.R;
 import com.knowbird.adapter.BirdAdapter;
 import com.knowbird.adapter.RecognizeAdapter;
+import com.knowbird.utils.ToastUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,8 +110,6 @@ public class RecognizeFragment extends BaseFragment {
     }
 
     private void showToast(String message) {
-        if (mContext != null) {
-            Toast.makeText(mContext, message, Toast.LENGTH_SHORT).show();
-        }
+        ToastUtils.showShort(message);
     }
 }
