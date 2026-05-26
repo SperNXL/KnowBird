@@ -17,7 +17,7 @@ import com.knowbird.fragment.RecognizeFragment;
 import com.knowbird.settings.SettingsFragment;
 import com.knowbird.settings.achievement.AchievementFragment;
 
-public class MainActivity extends AppCompatActivity implements SettingsFragment.OnSettingsItemClickListener {
+public class MainActivity extends BaseActivity implements SettingsFragment.OnSettingsItemClickListener {
 
     private LinearLayout navRecognize, navList, navGuide, navSettings;
     private ImageView ivRecognize, ivList, ivGuide, ivSettingsNav;
@@ -29,6 +29,11 @@ public class MainActivity extends AppCompatActivity implements SettingsFragment.
     private AchievementFragment achievementFragment;
     private GuideFragment guideFragment;
     private SettingsFragment settingsFragment;
+
+    @Override
+    protected View getRootView() {
+        return getWindow().getDecorView().getRootView();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
