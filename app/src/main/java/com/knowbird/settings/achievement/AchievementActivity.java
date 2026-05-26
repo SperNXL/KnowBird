@@ -62,8 +62,8 @@ public class AchievementActivity extends BaseActivity {
     }
 
     private void initView() {
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+//        Toolbar toolbar = findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         tvSummary = findViewById(R.id.tv_summary);
@@ -71,7 +71,7 @@ public class AchievementActivity extends BaseActivity {
         switchReadOnly = findViewById(R.id.switch_read_only);
         btnAdd = findViewById(R.id.btn_add);
         btnDelete = findViewById(R.id.btn_delete);
-        ImageView ivMore = findViewById(R.id.iv_more);
+//        ImageView ivMore = findViewById(R.id.iv_more);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
@@ -113,7 +113,7 @@ public class AchievementActivity extends BaseActivity {
         });
 
         // 更多菜单
-        ivMore.setOnClickListener(v -> showMorePopupMenu(v));
+//        ivMore.setOnClickListener(v -> showMorePopupMenu(v));
 
         // 初始更新统计
         updateSummary();

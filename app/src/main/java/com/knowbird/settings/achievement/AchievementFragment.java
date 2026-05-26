@@ -3,14 +3,12 @@ package com.knowbird.settings.achievement;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -47,20 +45,11 @@ public class AchievementFragment extends BaseFragment {
 
     @Override
     protected void initView(@NonNull View view) {
-        Toolbar toolbar = view.findViewById(R.id.toolbar);
-        if (getActivity() != null) {
-            ((androidx.appcompat.app.AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-            if (((androidx.appcompat.app.AppCompatActivity) getActivity()).getSupportActionBar() != null) {
-                ((androidx.appcompat.app.AppCompatActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(false);
-            }
-        }
-
         tvSummary = view.findViewById(R.id.tv_summary);
         recyclerView = view.findViewById(R.id.recyclerView);
         switchReadOnly = view.findViewById(R.id.switch_read_only);
         btnAdd = view.findViewById(R.id.btn_add);
         btnDelete = view.findViewById(R.id.btn_delete);
-        ImageView ivMore = view.findViewById(R.id.iv_more);
 
         initViewModel();
 
@@ -99,8 +88,6 @@ public class AchievementFragment extends BaseFragment {
             adapter.clearSelection();
             adapter.submitList(dataList);
         });
-
-        ivMore.setOnClickListener(this::showMorePopupMenu);
 
         updateSummary();
     }
