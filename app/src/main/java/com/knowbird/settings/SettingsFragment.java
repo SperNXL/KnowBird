@@ -1,5 +1,7 @@
 package com.knowbird.settings;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.view.View;
 import android.widget.Toast;
 
@@ -14,6 +16,7 @@ import com.knowbird.settings.inter.ISettingsItem;
 import com.knowbird.settings.item.ClickItem;
 import com.knowbird.settings.item.SwitchItem;
 import com.knowbird.settings.item.TitleItem;
+import com.knowbird.settings.item.VersionItem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +61,20 @@ public class SettingsFragment extends BaseFragment implements SettingsAdapter.On
         list.add(new ClickItem("announcement", "公告", null));
         list.add(new ClickItem("clear_cache", "清除缓存", null));
 
+        list.add(new VersionItem("version", getVersionName()));
+
         return list;
+    }
+
+    private String getVersionName() {
+        try {
+            PackageManager packageManager = getActivity().getPackageManager();
+            PackageInfo packageInfo = packageManager.getPackageInfo(getActivity().getPackageName(), 0);
+            return packageInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+            return "未知版本";
+        }
     }
 
     @Override

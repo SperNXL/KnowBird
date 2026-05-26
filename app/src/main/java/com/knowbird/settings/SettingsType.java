@@ -12,5 +12,8 @@ public enum SettingsType {
     TYPE_SWITCH,
 
     // 点击项（如公告、成就）
-    TYPE_CLICK
+    TYPE_CLICK,
+
+    // 版本信息项
+    TYPE_VERSION
 }

@@ -16,6 +16,7 @@ import com.knowbird.settings.inter.ISettingsItem;
 import com.knowbird.settings.item.ClickItem;
 import com.knowbird.settings.item.SwitchItem;
 import com.knowbird.settings.item.TitleItem;
+import com.knowbird.settings.item.VersionItem;
 
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 return new TitleHolder(inflater.inflate(R.layout.item_settings_title, parent, false));
             case TYPE_SWITCH:
                 return new SwitchHolder(inflater.inflate(R.layout.item_settings_switch, parent, false));
+            case TYPE_VERSION:
+                return new VersionHolder(inflater.inflate(R.layout.item_settings_version, parent, false));
             case TYPE_CLICK:
             default:
                 return new ClickHolder(inflater.inflate(R.layout.item_settings_click, parent, false));
@@ -67,6 +70,9 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 break;
             case TYPE_SWITCH:
                 ((SwitchHolder) holder).bind((SwitchItem) item, mListener);
+                break;
+            case TYPE_VERSION:
+                ((VersionHolder) holder).bind((VersionItem) item);
                 break;
             case TYPE_CLICK:
                 ((ClickHolder) holder).bind((ClickItem) item, mListener);
@@ -138,6 +144,20 @@ public class SettingsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                     listener.onItemClicked(item.getId(), item.getIntent());
                 }
             });
+        }
+    }
+
+    // 版本信息 Holder
+    static class VersionHolder extends RecyclerView.ViewHolder {
+        TextView tvVersion;
+
+        public VersionHolder(@NonNull View itemView) {
+            super(itemView);
+            tvVersion = itemView.findViewById(R.id.tv_version);
+        }
+
+        public void bind(VersionItem item) {
+            tvVersion.setText(item.getVersionName());
         }
     }
 
