@@ -22,6 +22,7 @@ public class MainActivity extends BaseActivity implements SettingsFragment.OnSet
     private LinearLayout navRecognize, navList, navGuide, navSettings;
     private ImageView ivRecognize, ivList, ivGuide, ivSettingsNav;
     private TextView tvRecognize, tvList, tvGuide, tvSettings;
+    private View indicatorRecognize, indicatorList, indicatorGuide, indicatorSettings;
 
     private FragmentManager fragmentManager;
     private Fragment currentFragment;
@@ -62,6 +63,10 @@ public class MainActivity extends BaseActivity implements SettingsFragment.OnSet
         tvList = findViewById(R.id.tv_list);
         tvGuide = findViewById(R.id.tv_guide);
         tvSettings = findViewById(R.id.tv_settings);
+        indicatorRecognize = findViewById(R.id.indicator_recognize);
+        indicatorList = findViewById(R.id.indicator_list);
+        indicatorGuide = findViewById(R.id.indicator_guide);
+        indicatorSettings = findViewById(R.id.indicator_settings);
 
         navRecognize.setOnClickListener(v -> {
             showFragment(0);
@@ -133,30 +138,38 @@ public class MainActivity extends BaseActivity implements SettingsFragment.OnSet
 
     private void updateNavigationSelection(int selectedIndex) {
         ivRecognize.setImageResource(R.drawable.ic_nav_recognize);
-        tvRecognize.setTextColor(getResources().getColor(R.color.grey));
+        tvRecognize.setTextColor(getResources().getColor(R.color.light_grey));
+        indicatorRecognize.setVisibility(View.INVISIBLE);
         ivList.setImageResource(R.drawable.ic_nav_list);
-        tvList.setTextColor(getResources().getColor(R.color.grey));
+        tvList.setTextColor(getResources().getColor(R.color.light_grey));
+        indicatorList.setVisibility(View.INVISIBLE);
         ivGuide.setImageResource(R.drawable.ic_nav_guide);
-        tvGuide.setTextColor(getResources().getColor(R.color.grey));
+        tvGuide.setTextColor(getResources().getColor(R.color.light_grey));
+        indicatorGuide.setVisibility(View.INVISIBLE);
         ivSettingsNav.setImageResource(R.drawable.ic_nav_settings);
-        tvSettings.setTextColor(getResources().getColor(R.color.grey));
+        tvSettings.setTextColor(getResources().getColor(R.color.light_grey));
+        indicatorSettings.setVisibility(View.INVISIBLE);
 
         switch (selectedIndex) {
             case 0:
                 ivRecognize.setImageResource(R.drawable.ic_nav_recognize_selected);
                 tvRecognize.setTextColor(getResources().getColor(R.color.colorPrimary));
+                indicatorRecognize.setVisibility(View.VISIBLE);
                 break;
             case 1:
                 ivList.setImageResource(R.drawable.ic_nav_list_selected);
                 tvList.setTextColor(getResources().getColor(R.color.colorPrimary));
+                indicatorList.setVisibility(View.VISIBLE);
                 break;
             case 2:
                 ivGuide.setImageResource(R.drawable.ic_nav_guide_selected);
                 tvGuide.setTextColor(getResources().getColor(R.color.colorPrimary));
+                indicatorGuide.setVisibility(View.VISIBLE);
                 break;
             case 3:
                 ivSettingsNav.setImageResource(R.drawable.ic_nav_settings_selected);
                 tvSettings.setTextColor(getResources().getColor(R.color.colorPrimary));
+                indicatorSettings.setVisibility(View.VISIBLE);
                 break;
         }
     }
